@@ -1,0 +1,695 @@
+@prefix oer: <http://oerschema.org/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sdo: <http://schema.org/> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+oer:ActionType a rdfs:Class ;
+    rdfs:label "ActionType" ;
+    rdfs:comment "A datatype declaring the type of action taken" ;
+    rdfs:subClassOf oer:DataType .
+
+oer:Activity a rdfs:Class ;
+    rdfs:label "Activity" ;
+    rdfs:comment "An activity performed by students which can be assessed and graded." ;
+    rdfs:subClassOf oer:Task .
+
+oer:Assess a rdfs:Class ;
+    rdfs:label "Assess" ;
+    rdfs:comment "Assess is involved with the resource" ;
+    rdfs:subClassOf oer:ActionType .
+
+oer:Assessment a rdfs:Class ;
+    rdfs:label "Assessment" ;
+    rdfs:comment "An assessment of a student's activity." ;
+    rdfs:subClassOf oer:InstructionalPattern,
+        sdo:Action .
+
+oer:AssociatedMaterial a rdfs:Class ;
+    rdfs:label "AssociatedMaterial" ;
+    rdfs:comment "Material that is associated with the course." ;
+    rdfs:subClassOf oer:LearningComponent .
+
+oer:Boolean a rdfs:Class ;
+    rdfs:label "Boolean" ;
+    rdfs:comment "A truthy value" ;
+    rdfs:subClassOf oer:DataType,
+        sdo:Boolean .
+
+oer:Class a rdfs:Class ;
+    rdfs:label "Class" ;
+    rdfs:subClassOf oer:Intangible,
+        sdo:Class .
+
+oer:ClassStanding a rdfs:Class ;
+    rdfs:label "ClassStanding" ;
+    rdfs:comment "" ;
+    rdfs:subClassOf oer:Intangible .
+
+oer:CompletionGradeFormat a rdfs:Class ;
+    rdfs:label "CompletionGradeFormat" ;
+    rdfs:comment "A boolean grading format determining if the activity had been completed." ;
+    rdfs:subClassOf oer:GradeFormat .
+
+oer:Course a rdfs:Class ;
+    rdfs:label "Course" ;
+    rdfs:comment "An instructional course" ;
+    rdfs:subClassOf oer:Resource .
+
+oer:CourseSection a rdfs:Class ;
+    rdfs:label "CourseSection" ;
+    rdfs:comment "A specific instance of a course offered during a specific term" ;
+    rdfs:subClassOf oer:Resource .
+
+oer:CourseSyllabus a rdfs:Class ;
+    rdfs:label "CourseSyllabus" ;
+    rdfs:comment "" ;
+    rdfs:subClassOf oer:Resource .
+
+oer:CreativeWork a rdfs:Class ;
+    rdfs:label "CreativeWork" ;
+    rdfs:comment "" ;
+    rdfs:subClassOf oer:Thing,
+        sdo:CreativeWork .
+
+oer:DataType a rdfs:Class ;
+    rdfs:label "DataType" ;
+    rdfs:comment "A general type for data values." ;
+    rdfs:subClassOf oer:Class,
+        sdo:DataType,
+        rdfs:Datatype .
+
+oer:Date a rdfs:Class ;
+    rdfs:label "Date" ;
+    rdfs:comment "A year, month, day value" ;
+    rdfs:subClassOf oer:DataType,
+        sdo:Date .
+
+oer:DateTime a rdfs:Class ;
+    rdfs:label "DateTime" ;
+    rdfs:comment "A value with year, month, day, hour, minute, seconds (optional) and timezone (optional)." ;
+    rdfs:subClassOf oer:DataType,
+        sdo:DateTime .
+
+oer:Discussing a rdfs:Class ;
+    rdfs:label "Discussing" ;
+    rdfs:comment "Discussing is involved with the resource" ;
+    rdfs:subClassOf oer:ActionType .
+
+oer:Enumeration a rdfs:Class ;
+    rdfs:label "Enumeration" ;
+    rdfs:subClassOf oer:Intangible,
+        sdo:Enumeration .
+
+oer:FaceToFaceFormat a rdfs:Class ;
+    rdfs:label "FaceToFaceFormat" ;
+    rdfs:comment "An in-person format where participants are physically present." ;
+    rdfs:subClassOf oer:Format .
+
+oer:False a rdfs:Class ;
+    rdfs:label "False" ;
+    rdfs:comment "A truthy value of False." ;
+    rdfs:subClassOf oer:Boolean,
+        sdo:False .
+
+oer:Format a rdfs:Class ;
+    rdfs:label "Format" ;
+    rdfs:comment "The format of the resource." ;
+    rdfs:subClassOf oer:Intangible .
+
+oer:GradeFormat a rdfs:Class ;
+    rdfs:label "GradeFormat" ;
+    rdfs:comment "The grading format used in activities and assessments." ;
+    rdfs:subClassOf oer:Intangible .
+
+oer:ImageObject a rdfs:Class ;
+    rdfs:label "ImageObject" ;
+    rdfs:comment "An image" ;
+    rdfs:subClassOf oer:MediaObject,
+        sdo:ImageObject .
+
+oer:InstructionalPattern a rdfs:Class ;
+    rdfs:label "InstructionalPattern" ;
+    rdfs:comment "An assembly of learning components arranged to deliver a learning experience" ;
+    rdfs:subClassOf oer:LearningComponent .
+
+oer:Intangible a rdfs:Class ;
+    rdfs:label "Intangible" ;
+    rdfs:comment "A utility class that serves as the umbrella for a number of 'intangible' things such as quantities, structured values, etc." ;
+    rdfs:subClassOf oer:Thing,
+        sdo:Intangible .
+
+oer:Integer a rdfs:Class ;
+    rdfs:label "Integer" ;
+    rdfs:comment "A numeric value of 0 or greater." ;
+    rdfs:subClassOf oer:Number,
+        sdo:Integer .
+
+oer:LearningComponent a rdfs:Class ;
+    rdfs:label "LearningComponent" ;
+    rdfs:comment "A generic component as a base to learning content" ;
+    rdfs:subClassOf oer:Resource,
+        sdo:CreativeWork .
+
+oer:LearningObjective a rdfs:Class ;
+    rdfs:label "LearningObjective" ;
+    rdfs:subClassOf oer:Resource .
+
+oer:Lesson a rdfs:Class ;
+    rdfs:label "Lesson" ;
+    rdfs:comment "" ;
+    rdfs:subClassOf oer:InstructionalPattern .
+
+oer:LetterGradeFormat a rdfs:Class ;
+    rdfs:label "LetterGradeFormat" ;
+    rdfs:comment "A grading format using a letter value." ;
+    rdfs:subClassOf oer:GradeFormat .
+
+oer:Listening a rdfs:Class ;
+    rdfs:label "Listening" ;
+    rdfs:comment "Listening is involved with the resource" ;
+    rdfs:subClassOf oer:ActionType .
+
+oer:Making a rdfs:Class ;
+    rdfs:label "Making" ;
+    rdfs:comment "Making is involved with the resource" ;
+    rdfs:subClassOf oer:ActionType .
+
+oer:MediaObject a rdfs:Class ;
+    rdfs:label "MediaObject" ;
+    rdfs:comment "A media object such as a video or interactive object." ;
+    rdfs:subClassOf oer:CreativeWork,
+        sdo:MediaObject .
+
+oer:Module a rdfs:Class ;
+    rdfs:label "Module" ;
+    rdfs:comment "" ;
+    rdfs:subClassOf oer:InstructionalPattern .
+
+oer:No a rdfs:Class ;
+    rdfs:label "No" ;
+    rdfs:comment "A truthy value of No." ;
+    rdfs:subClassOf oer:Boolean .
+
+oer:Number a rdfs:Class ;
+    rdfs:label "Number" ;
+    rdfs:comment "A general numeric value." ;
+    rdfs:subClassOf oer:DataType,
+        sdo:Number .
+
+oer:Observing a rdfs:Class ;
+    rdfs:label "Observing" ;
+    rdfs:comment "Observing is involved with the resource" ;
+    rdfs:subClassOf oer:ActionType .
+
+oer:Organization a rdfs:Class ;
+    rdfs:label "Organization" ;
+    rdfs:comment "" ;
+    rdfs:subClassOf oer:Thing,
+        sdo:Organization .
+
+oer:PercentGradeFormat a rdfs:Class ;
+    rdfs:label "PercentGradeFormat" ;
+    rdfs:comment "A grading format using a percentage value." ;
+    rdfs:subClassOf oer:GradeFormat .
+
+oer:Person a rdfs:Class ;
+    rdfs:label "Person" ;
+    rdfs:comment "" ;
+    rdfs:subClassOf oer:Thing,
+        sdo:Person .
+
+oer:Place a rdfs:Class ;
+    rdfs:label "Place" ;
+    rdfs:comment "" ;
+    rdfs:subClassOf oer:Thing,
+        sdo:Place .
+
+oer:PointGradeFormat a rdfs:Class ;
+    rdfs:label "PointGradeFormat" ;
+    rdfs:comment "A grading format using numerical points" ;
+    rdfs:subClassOf oer:GradeFormat .
+
+oer:Practice a rdfs:Class ;
+    rdfs:label "Practice" ;
+    rdfs:comment "" ;
+    rdfs:subClassOf oer:Task .
+
+oer:Presenting a rdfs:Class ;
+    rdfs:label "Presenting" ;
+    rdfs:comment "Presenting is involved with the resource" ;
+    rdfs:subClassOf oer:ActionType .
+
+oer:Project a rdfs:Class ;
+    rdfs:label "Project" ;
+    rdfs:comment "A collection of activities, each of which test a particular skill, demonstrating proficiency across a range of skills" ;
+    rdfs:subClassOf oer:Activity .
+
+oer:Property a rdfs:Class ;
+    rdfs:label "Property" ;
+    rdfs:subClassOf oer:Intangible,
+        sdo:Intangible .
+
+oer:Quiz a rdfs:Class ;
+    rdfs:label "Quiz" ;
+    rdfs:comment "A quiz assessment" ;
+    rdfs:subClassOf oer:Assessment .
+
+oer:Reading a rdfs:Class ;
+    rdfs:label "Reading" ;
+    rdfs:comment "Reading is involved with the resource" ;
+    rdfs:subClassOf oer:ActionType .
+
+oer:ReferencedMaterial a rdfs:Class ;
+    rdfs:label "ReferencedMaterial" ;
+    rdfs:comment "Material associated with an instructional component that is referenced by that component. Examples include primary sources analysed in activities or assessments, material studied in Courses, raw material used in activities or assessments" ;
+    rdfs:subClassOf oer:AssociatedMaterial .
+
+oer:Reflecting a rdfs:Class ;
+    rdfs:label "Refecting" ;
+    rdfs:comment "Reflecting is involved with the resource" ;
+    rdfs:subClassOf oer:ActionType .
+
+oer:Researching a rdfs:Class ;
+    rdfs:label "ResearchingActivity" ;
+    rdfs:comment "Researching is involved with the resource" ;
+    rdfs:subClassOf oer:ActionType .
+
+oer:Resource a rdfs:Class ;
+    rdfs:label "Resource" ;
+    rdfs:comment "A general component that all open educational resources are based from." ;
+    rdfs:subClassOf <http://creativecommons.org/ns#Work>,
+        sdo:Thing .
+
+oer:StructuredValue a rdfs:Class ;
+    rdfs:label "StructuredValue" ;
+    rdfs:comment "" ;
+    rdfs:subClassOf oer:Intangible,
+        sdo:StructuredValue .
+
+oer:Submission a rdfs:Class ;
+    rdfs:label "Submission" ;
+    rdfs:comment "An assessment on material provided by a Student" ;
+    rdfs:subClassOf oer:Assessment .
+
+oer:SupplementalMaterial a rdfs:Class ;
+    rdfs:label "SupplementalMaterial" ;
+    rdfs:comment "Material associated with an instructional component that provides additional information about that component. Examples include Curriculum guides, Family course guides Student study guides." ;
+    rdfs:subClassOf oer:AssociatedMaterial .
+
+oer:SupportingMaterial a rdfs:Class ;
+    rdfs:label "SupportingMaterial" ;
+    rdfs:comment "Material associated with an instructional component that teaches the learning objectives of that component." ;
+    rdfs:subClassOf oer:AssociatedMaterial .
+
+oer:TableOfContents a rdfs:Class ;
+    rdfs:subClassOf sdo:Thing .
+
+oer:TableOfContentsEntry a rdfs:Class ;
+    rdfs:subClassOf oer:TableOfContents .
+
+oer:Task a rdfs:Class ;
+    rdfs:label "Task" ;
+    rdfs:comment "A task given to a student" ;
+    rdfs:subClassOf oer:InstructionalPattern,
+        sdo:Action .
+
+oer:Text a rdfs:Class ;
+    rdfs:label "Text" ;
+    rdfs:subClassOf oer:DataType,
+        sdo:Text .
+
+oer:Thing a rdfs:Class ;
+    rdfs:label "Thing" ;
+    rdfs:comment "The most generic type of items." ;
+    rdfs:subClassOf sdo:Thing .
+
+oer:Time a rdfs:Class ;
+    rdfs:label "Time" ;
+    rdfs:comment "A value including hour, minute, seconds (optional) and timezone (optional)." ;
+    rdfs:subClassOf oer:DataType,
+        sdo:Time .
+
+oer:Topic a rdfs:Class ;
+    rdfs:label "Topic" ;
+    rdfs:comment "The context of a LearningComponent" ;
+    rdfs:subClassOf oer:Resource .
+
+oer:True a rdfs:Class ;
+    rdfs:label "True" ;
+    rdfs:comment "A truthy value of True." ;
+    rdfs:subClassOf oer:Boolean,
+        sdo:True .
+
+oer:URL a rdfs:Class ;
+    rdfs:label "URL" ;
+    rdfs:comment "A web address" ;
+    rdfs:subClassOf oer:Text,
+        sdo:URL .
+
+oer:Unit a rdfs:Class ;
+    rdfs:label "Unit" ;
+    rdfs:comment "" ;
+    rdfs:subClassOf oer:InstructionalPattern .
+
+oer:Watching a rdfs:Class ;
+    rdfs:label "Watching" ;
+    rdfs:comment "Watching is involved with the resource" ;
+    rdfs:subClassOf oer:ActionType .
+
+oer:Writing a rdfs:Class ;
+    rdfs:label "Writing is involved with the resource" ;
+    rdfs:comment "" ;
+    rdfs:subClassOf oer:ActionType .
+
+oer:Yes a rdfs:Class ;
+    rdfs:label "Yes" ;
+    rdfs:comment "A truthy value of Yes." ;
+    rdfs:subClassOf oer:Boolean .
+
+oer:additionalName a oer:Property,
+        rdf:Property ;
+    rdfs:label "additionalName" ;
+    sdo:domainIncludes oer:Text ;
+    sdo:rangeIncludes oer:Text ;
+    rdfs:comment "An alias for the item." .
+
+oer:additionalType a oer:Property,
+        rdf:Property ;
+    rdfs:label "additionalType" ;
+    sdo:domainIncludes oer:Class ;
+    sdo:rangeIncludes oer:Class ;
+    rdfs:comment "An additional type for the item, typically used for adding more specific types from external vocabularies in microdata syntax." .
+
+oer:assessedBy a oer:Property,
+        rdf:Property ;
+    rdfs:label "assessedBy" ;
+    sdo:domainIncludes oer:Assessment ;
+    sdo:rangeIncludes oer:Assessment ;
+    rdfs:comment "The assessment for this activity." .
+
+oer:assessing a oer:Property,
+        rdf:Property ;
+    rdfs:label "assessing" ;
+    sdo:domainIncludes oer:Activity ;
+    sdo:rangeIncludes oer:Activity ;
+    rdfs:comment "The activity the assessment is assessing." .
+
+oer:associatedMedia a oer:Property,
+        rdf:Property ;
+    rdfs:label "associatedMedia" ;
+    sdo:domainIncludes <http://oerschema.org/http://schema.org/MediaObject> ;
+    sdo:rangeIncludes <http://oerschema.org/http://schema.org/MediaObject> ;
+    rdfs:comment "Refers to any media referenced by the content" .
+
+oer:childOf a oer:Property,
+        rdf:Property ;
+    rdfs:label "childOf" ;
+    sdo:domainIncludes oer:Resource ;
+    sdo:rangeIncludes oer:Resource ;
+    rdfs:comment "A child in relation to a parent resource." .
+
+oer:courseIdentifier a oer:Property,
+        rdf:Property ;
+    rdfs:label "courseIdentifier" ;
+    sdo:domainIncludes oer:Text ;
+    sdo:rangeIncludes oer:Text ;
+    rdfs:comment "The identifier of the course, i.e. MATH-100" .
+
+oer:currentStanding a oer:Property,
+        rdf:Property ;
+    rdfs:label "currentStanding" ;
+    sdo:domainIncludes oer:ClassStanding ;
+    sdo:rangeIncludes oer:ClassStanding .
+
+oer:deliveryFormat a oer:Property,
+        rdf:Property ;
+    rdfs:label "deliveryFormat" ;
+    sdo:domainIncludes oer:Format,
+        oer:Text ;
+    sdo:rangeIncludes oer:Format,
+        oer:Text ;
+    rdfs:comment "The format used to deliver the resource." .
+
+oer:deliveryMode a oer:Property,
+        rdf:Property ;
+    rdfs:label "deliveryMode" ;
+    sdo:domainIncludes oer:Text ;
+    sdo:rangeIncludes oer:Text .
+
+oer:department a oer:Property,
+        rdf:Property ;
+    rdfs:label "department" ;
+    sdo:domainIncludes oer:Organization ;
+    sdo:rangeIncludes oer:Organization .
+
+oer:description a oer:Property,
+        rdf:Property ;
+    rdfs:label "description" ;
+    sdo:domainIncludes oer:Text ;
+    sdo:rangeIncludes oer:Text ;
+    rdfs:comment "A short description of the item." .
+
+oer:doTask a oer:Property,
+        rdf:Property ;
+    rdfs:label "doTask" ;
+    sdo:domainIncludes oer:Task ;
+    sdo:rangeIncludes oer:Task ;
+    rdfs:comment "Which tasks are to be completed for a LearningComponent" .
+
+oer:domainIncludes a oer:Property,
+        rdf:Property ;
+    rdfs:label "domainIncludes" ;
+    sdo:domainIncludes oer:Class ;
+    sdo:rangeIncludes oer:Class ;
+    rdfs:comment "Relates a property to a class that is (one of) the type(s) the property is expected to be used on." .
+
+oer:duration a oer:Property,
+        rdf:Property ;
+    rdfs:label "duration" ;
+    sdo:domainIncludes oer:Enumeration,
+        oer:Number,
+        oer:Text ;
+    sdo:rangeIncludes oer:Enumeration,
+        oer:Number,
+        oer:Text ;
+    rdfs:comment "The duration of the resource." .
+
+oer:enrollmentSize a oer:Property,
+        rdf:Property ;
+    rdfs:label "enrollment" ;
+    sdo:domainIncludes oer:Number ;
+    sdo:rangeIncludes oer:Number .
+
+oer:entry a oer:Property,
+        rdf:Property ;
+    rdfs:label "entry" ;
+    sdo:domainIncludes oer:TableOfContentsEntry ;
+    sdo:rangeIncludes oer:TableOfContentsEntry ;
+    rdfs:comment "An entry adds a item to a ToC." .
+
+oer:forComponent a oer:Property,
+        rdf:Property ;
+    rdfs:label "forComponent" ;
+    sdo:domainIncludes oer:LearningComponent ;
+    sdo:rangeIncludes oer:LearningComponent ;
+    rdfs:comment "Which LearningComponent the resource supports (inverse of hasComponent)" .
+
+oer:forCourse a oer:Property,
+        rdf:Property ;
+    rdfs:label "forCourse" ;
+    sdo:domainIncludes oer:Course ;
+    sdo:rangeIncludes oer:Course ;
+    rdfs:comment "The Course in which the resource is meant for." .
+
+oer:forTopic a oer:Property,
+        rdf:Property ;
+    rdfs:label "forTopic" ;
+    sdo:domainIncludes oer:Topic ;
+    sdo:rangeIncludes oer:Topic ;
+    rdfs:comment "The Topic the resource is associated with" .
+
+oer:gradingFormat a oer:Property,
+        rdf:Property ;
+    rdfs:label "gradingFormat" ;
+    sdo:domainIncludes oer:GradeFormat,
+        oer:Text ;
+    sdo:rangeIncludes oer:GradeFormat,
+        oer:Text ;
+    rdfs:comment "The grading format for this resource" .
+
+oer:hasComponent a oer:Property,
+        rdf:Property ;
+    rdfs:label "forComponent" ;
+    sdo:domainIncludes oer:LearningComponent ;
+    sdo:rangeIncludes oer:LearningComponent ;
+    rdfs:comment "Which LearningComponent the InstructionalPattern contains or is supported by (inverse of forComponent)" .
+
+oer:hasLearningObjective a oer:Property,
+        rdf:Property ;
+    rdfs:label "hasLearningObjective" ;
+    sdo:domainIncludes oer:LearningObjective ;
+    sdo:rangeIncludes oer:LearningObjective ;
+    rdfs:comment "A LearningObjective gained as a result of an InstructionalPattern ." .
+
+oer:image a oer:Property,
+        rdf:Property ;
+    rdfs:label "image" ;
+    sdo:domainIncludes oer:CreativeWork,
+        oer:URL ;
+    sdo:rangeIncludes oer:CreativeWork,
+        oer:URL ;
+    rdfs:comment "An image of the item." .
+
+oer:institution a oer:Property,
+        rdf:Property ;
+    rdfs:label "insitution" ;
+    sdo:domainIncludes oer:Organization ;
+    sdo:rangeIncludes oer:Organization .
+
+oer:instructor a oer:Property,
+        rdf:Property ;
+    rdfs:label "instructor" ;
+    sdo:domainIncludes oer:Person ;
+    sdo:rangeIncludes oer:Person .
+
+oer:inverseOf a oer:Property,
+        rdf:Property ;
+    rdfs:label "inverseOf" ;
+    sdo:domainIncludes oer:Property ;
+    sdo:rangeIncludes oer:Property ;
+    rdfs:comment "Relates a property to a property that is its inverse. Inverse properties relate the same pairs of items to each other, but in reversed direction. For example, the 'alumni' and 'alumniOf' properties are inverseOf each other. Some properties don't have explicit inverses; in these situations RDFa and JSON-LD syntax for reverse properties can be used." .
+
+oer:mainContent a oer:Property,
+        rdf:Property ;
+    rdfs:label "mainContent" ;
+    sdo:domainIncludes oer:Text ;
+    sdo:rangeIncludes oer:Text ;
+    rdfs:comment "The main content relating to the item." .
+
+oer:mainEntityOfPage a oer:Property,
+        rdf:Property ;
+    rdfs:label "mainEntityOfPage" ;
+    sdo:domainIncludes oer:CreativeWork,
+        oer:URL ;
+    sdo:rangeIncludes oer:CreativeWork,
+        oer:URL ;
+    rdfs:comment "Indicates a page (or other CreativeWork) for which this thing is the main entity being described." .
+
+oer:material a oer:Property,
+        rdf:Property ;
+    rdfs:label "material" ;
+    sdo:domainIncludes oer:SupportingMaterial ;
+    sdo:rangeIncludes oer:SupportingMaterial ;
+    rdfs:comment "The supporting material assiociated with a resource." .
+
+oer:name a oer:Property,
+        rdf:Property ;
+    rdfs:label "name" ;
+    sdo:domainIncludes oer:Text ;
+    sdo:rangeIncludes oer:Text ;
+    rdfs:comment "The name of the item." .
+
+oer:parentOf a oer:Property,
+        rdf:Property ;
+    rdfs:label "parentOf" ;
+    sdo:domainIncludes oer:Resource ;
+    sdo:rangeIncludes oer:Resource ;
+    rdfs:comment "A parent in relation to a child resource." .
+
+oer:prerequisite a oer:Property,
+        rdf:Property ;
+    rdfs:label "prerequisite" ;
+    sdo:domainIncludes oer:Course,
+        oer:LearningComponent,
+        oer:LearningObjective ;
+    sdo:rangeIncludes oer:Course,
+        oer:LearningComponent,
+        oer:LearningObjective ;
+    rdfs:comment "A requirement to be completed before this resource can be performed." .
+
+oer:primaryInstructor a oer:Property,
+        rdf:Property ;
+    rdfs:label "primaryInstructor" ;
+    sdo:domainIncludes oer:Person ;
+    sdo:rangeIncludes oer:Person .
+
+oer:program a oer:Property,
+        rdf:Property ;
+    rdfs:label "program" ;
+    sdo:domainIncludes oer:Organization ;
+    sdo:rangeIncludes oer:Organization .
+
+oer:rangeIncludes a oer:Property,
+        rdf:Property ;
+    rdfs:label "rangeIncludes" ;
+    sdo:domainIncludes oer:Class ;
+    sdo:rangeIncludes oer:Class ;
+    rdfs:comment "Relates a property to a class that constitutes (one of) the expected type(s) for values of the property." .
+
+oer:sameAs a oer:Property,
+        rdf:Property ;
+    rdfs:label "sameAs" ;
+    sdo:domainIncludes oer:URL ;
+    sdo:rangeIncludes oer:URL ;
+    rdfs:comment "URL of a reference Web page that unambiguously indicates the item's identity. E.g. the URL of the item's Wikipedia page, Freebase page, or official website." .
+
+oer:section a oer:Property,
+        rdf:Property ;
+    rdfs:label "section" ;
+    sdo:domainIncludes oer:CourseSection ;
+    sdo:rangeIncludes oer:CourseSection ;
+    rdfs:comment "A specific instance of a course offered during a specific term." .
+
+oer:sectionIdentifier a oer:Property,
+        rdf:Property ;
+    rdfs:label "sectionIdentifier" ;
+    sdo:domainIncludes oer:Text ;
+    sdo:rangeIncludes oer:Text ;
+    rdfs:comment "The identifier of the section, i.e. 001, 002, e3we1-09" .
+
+oer:skill a oer:Property,
+        rdf:Property ;
+    rdfs:label "skill" ;
+    sdo:domainIncludes oer:Text ;
+    sdo:rangeIncludes oer:Text ;
+    rdfs:comment "A learned skill obtained by completion of a LearningObjective" .
+
+oer:supersededBy a oer:Property,
+        rdf:Property ;
+    rdfs:label "supersededBy" ;
+    sdo:domainIncludes oer:Class,
+        oer:Enumeration,
+        oer:Property ;
+    sdo:rangeIncludes oer:Class,
+        oer:Enumeration,
+        oer:Property .
+
+oer:syllabus a oer:Property,
+        rdf:Property ;
+    rdfs:label "syllabus" ;
+    sdo:domainIncludes oer:CourseSyllabus ;
+    sdo:rangeIncludes oer:CourseSyllabus .
+
+oer:termOffered a oer:Property,
+        rdf:Property ;
+    rdfs:label "termOffered" ;
+    sdo:domainIncludes oer:Text ;
+    sdo:rangeIncludes oer:Text ;
+    rdfs:comment "A term during which a course or course section is offered." .
+
+oer:typeOfAction a oer:Property,
+        rdf:Property ;
+    rdfs:label "typeOfAction" ;
+    sdo:domainIncludes oer:ActionType ;
+    sdo:rangeIncludes oer:ActionType ;
+    rdfs:comment "The type of action to be taken" .
+
+oer:uri a oer:Property,
+        rdf:Property ;
+    rdfs:label "uri" ;
+    sdo:domainIncludes oer:URL ;
+    sdo:rangeIncludes oer:URL ;
+    rdfs:comment "URL of the item." .
+

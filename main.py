@@ -73,15 +73,27 @@ class OCXdata:
                 self.showTurtle = False
         except:
             self.showTurtle = False
+        try:
+            if query_parameters.get("verbose") == "1":
+                self.verbose = True
+            else:
+                self.verbose = False
+        except:
+            self.verbose = True
 
     def set_request_url(self, url):
         if url:
             self.request_url = url
         else:
             msg = "Request url not set.\n"
-            msg = msg + "Try e.g. " + request.host_url + "?url=https://philbarker.github.io/OCXPhysVibWav/l1/\n"
+            msg = (
+                msg
+                + "Try e.g. "
+                + request.host_url
+                + "?url=https://philbarker.github.io/OCXPhysVibWav/l1/\n"
+            )
             msg = msg + "see " + request.host_url + "/info for more info."
-            raise RuntimeError( msg )
+            raise RuntimeError(msg)
 
     def get_page_data(self):
         response = get(self.request_url)
@@ -153,14 +165,17 @@ class OCXdata:
         return self.deduplicate(ocx_entities)
 
     def report_on_name(self, entity):
+        verbose = self.verbose
         name_report = ""
         c = 0
         for name in self.graph.objects(entity, SDO.name):
-            name_report = name_report + "PASS: Name exists.\n"
+            if verbose:
+                name_report = name_report + "PASS: Name exists.\n"
             if type(name).__name__ == "Literal":
-                msg = "PASS: Name: is Literal.\n"
-                name_report = name_report + msg
-                name_report = name_report + "INFO: Name = " + name + "\n"
+                if verbose:
+                    msg = "PASS: Name: is Literal.\n"
+                    name_report = name_report + msg
+                    name_report = name_report + "INFO: Name = " + name + "\n"
             else:
                 msg = "WARNING: name is not a literal.\n"
             c += 1
@@ -173,14 +188,19 @@ class OCXdata:
         return name_report
 
     def report_on_desc(self, entity):
+        verbose = self.verbose
         desc_report = ""
         c = 0
         for desc in self.graph.objects(entity, SDO.description):
-            desc_report = desc_report + "PASS: Description exists.\n"
+            if verbose:
+                desc_report = desc_report + "PASS: Description exists.\n"
             if type(desc).__name__ == "Literal":
-                msg = "PASS: Description is Literal.\n"
-                desc_report = desc_report + msg
-                desc_report = desc_report + "INFO: Description = " + desc[0:70] + "...\n"
+                if verbose:
+                    msg = "PASS: Description is Literal.\n"
+                    desc_report = desc_report + msg
+                    desc_report = (
+                        desc_report + "INFO: Description = " + desc[0:70] + "...\n"
+                    )
             else:
                 msg = "WARNING: description is not a literal.\n"
             c += 1
@@ -193,6 +213,7 @@ class OCXdata:
         return desc_report
 
     def report_on_type(self, entity):
+        verbose = self.verbose
         type_report = ""
         c = 0
         for t in self.graph.objects(entity, RDF.type):
@@ -205,14 +226,15 @@ class OCXdata:
                     pass
                 else:
                     parent = "schema.org"
-                msg = (
-                    "PASS: This type is known to OCX as "
-                    + label
-                    + " from "
-                    + parent
-                    + "\n"
-                )
-                type_report = type_report + msg
+                if verbose:
+                    msg = (
+                        "PASS: This type is known to OCX as "
+                        + label
+                        + " from "
+                        + parent
+                        + "\n"
+                    )
+                    type_report = type_report + msg
             else:
                 msg = "WARNING: This type is not known to OCX."
         if c == 0:
@@ -243,7 +265,7 @@ class OCXdata:
 
     def type_string(self, types: list):
         if len(types) == 0:
-            return '[no known type]'
+            return "[no known type]"
         types_string = ""
         for t in types:
             types_string = types_string + self.schema_label_string(t, "", ", ")
@@ -251,14 +273,14 @@ class OCXdata:
         return types_string
 
     def get_types(self, s):
-        type_name = ''
+        type_name = ""
         types = []
         if type(s) is URIRef:
             for a_type in self.graph.objects(s, RDF.type):
                 type_name = type_name + self.schema_label_string(a_type, "", ", ")
                 types = self.get_parent_classes(a_type, types)
             types = self.deduplicate(types)
-            if type_name == '':
+            if type_name == "":
                 types = [SDO.URL]
                 type_name = "URIRef"
         elif type(s) is BNode:
@@ -266,15 +288,15 @@ class OCXdata:
                 type_name = type_name + self.schema_label_string(a_type, "", ", ")
                 types = self.get_parent_classes(a_type, types)
             types = self.deduplicate(types)
-            if type_name == '':
+            if type_name == "":
                 types = []
                 type_name = "Untyped BNode"
         elif type(s) is Literal:
             types = [SDO.Text]
-            type_string = 'Text'
+            type_string = "Text"
         else:
             types = []
-            type_name = 'failed to determine type'
+            type_name = "failed to determine type"
             pass
 
         return type_name, types
@@ -294,24 +316,38 @@ class OCXdata:
             s_name = s_name + " " + name
         if s_name == "":
             s_name = "with no name"
-        report = ''
-        report = report + 'INFO: used on object named ' + s_name +'\n'
-        report = report + '\t which is of type(s): ' + types_string +'\n'
-        report = report + '\t property has expected domain ' + p_domain_labels + "\n"
+        report = ""
+        report = report + "INFO: used on object named " + s_name + "\n"
+        report = report + "\t which is of type(s): " + types_string + "\n"
+        report = report + "\t property has expected domain " + p_domain_labels + "\n"
         domain_valid = False
-        for t in  types :
+        for t in types:
             if t in valid_subject_types:
                 domain_valid = True
         if domain_valid:
-            report = report + "PASS: subject type is in expected domain of property\n"
+            if self.verbose:
+                report = (
+                    report + "PASS: subject type is in expected domain of property\n"
+                )
         elif type(s) is BNode:
-            report = report + "FAIL: An untyped BNode object has been used where " + p_domain_labels +" was expected.\n\tPlease add object type.\n"
+            report = (
+                report
+                + "FAIL: An untyped BNode object has been used where "
+                + p_domain_labels
+                + " was expected.\n\tPlease add object type.\n"
+            )
         elif type(s) is URIRef:
-            report = report + "WARNING:  A URI reference for an object of unknown type has been used (it may not be on this page) where " + p_domain_labels +" was expected.\n\tYou should check the object at the end of the URI is of the right type.\n\tYou could add its type here to stop seeing this warning.\n"
+            report = (
+                report
+                + "WARNING:  A URI reference for an object of unknown type has been used (it may not be on this page) where "
+                + p_domain_labels
+                + " was expected.\n\tYou should check the object at the end of the URI is of the right type.\n\tYou could add its type here to stop seeing this warning.\n"
+            )
         else:
-            report = report + "FAIL: subject type is not in expected domain of property\n"
+            report = (
+                report + "FAIL: subject type is not in expected domain of property\n"
+            )
         return report
-
 
     def predicate_object_report(self, p, o):
         valid_object_types = []
@@ -323,24 +359,39 @@ class OCXdata:
         p_range_labels = p_range_labels[:-2]
         type_name, types = self.get_types(o)
         range_valid = False
-        for t in  types :
+        for t in types:
             if t in valid_object_types:
                 range_valid = True
-        report = 'INFO: points to object of type ' + self.type_string(types) + '\n'
+        report = "INFO: points to object of type " + self.type_string(types) + "\n"
         report = report + "\t property has expected range " + p_range_labels
-        report = report + '\n'
-        if range_valid :
-            report = report + "PASS: object type is in expected range of property\n"
+        report = report + "\n"
+        if range_valid:
+            if self.verbose:
+                report = report + "PASS: object type is in expected range of property\n"
         elif type(o) is Literal:
-            report = report + "WARNING: Text has been used where " + p_range_labels +" was expected. This is not best practice.\n"
+            report = (
+                report
+                + "WARNING: Text has been used where "
+                + p_range_labels
+                + " was expected. This is not best practice.\n"
+            )
         elif type(o) is BNode:
-            report = report + "FAIL: An untyped BNode object has been used where " + p_range_labels +" was expected.\n\tPlease add object type.\n"
+            report = (
+                report
+                + "FAIL: An untyped BNode object has been used where "
+                + p_range_labels
+                + " was expected.\n\tPlease add object type.\n"
+            )
         elif type(o) is URIRef:
-            report = report + "WARNING: A URI reference for an object of unknown type has been used (it may not be on this page) where " + p_range_labels +" was expected.\n\tYou should check the object at the end of the URI is of the right type.\n\tYou could add its type here to stop seeing this warning.\n"
+            report = (
+                report
+                + "WARNING: A URI reference for an object of unknown type has been used (it may not be on this page) where "
+                + p_range_labels
+                + " was expected.\n\tYou should check the object at the end of the URI is of the right type.\n\tYou could add its type here to stop seeing this warning.\n"
+            )
         else:
             report = report + "FAIL: object type is not in expected range of property\n"
         return report
-
 
     def predicate_report(self):
         report = "\n\n==Report on OCX predicates found:==\n"
@@ -348,8 +399,16 @@ class OCXdata:
         for s, p, o in self.graph.triples((None, None, None)):
             if p in self.schema_g.subjects(RDF.type, RDF.Property):
                 p_name = self.schema_label_string(p, "", "")
-                report = report + '\nReport on predicate in '
-                report = report + escape(s.n3(nsm)) +' '+ escape(p.n3(nsm)) + ' ' + escape(o.n3(nsm)) + '\n'
+                report = report + "\nReport on predicate in "
+                report = (
+                    report
+                    + escape(s.n3(nsm))
+                    + " "
+                    + escape(p.n3(nsm))
+                    + " "
+                    + escape(o.n3(nsm))
+                    + "\n"
+                )
                 report = report + self.subject_predicate_report(s, p)
                 report = report + self.predicate_object_report(p, o)
         return report
@@ -359,7 +418,15 @@ class OCXdata:
         self.report = self.report + "Requested URL:\t" + self.request_url + "\n"
         self.report = self.report + "Base URL:\t" + self.base_url + "\n"
         self.report = self.report + "Status code:\t" + self.status_code + "\n"
-        self.report = self.report + "\n=Reporting on Primary OCX Entities and all OCX predicates=\n"
+        self.report = (
+            self.report
+            + "\n=Reporting on Primary OCX Entities and all OCX predicates=\n"
+        )
+        if self.verbose:
+            msg = "Verbose report. Add &verbose=0 URL parameter to show only errors and warnings.\n"
+        else:
+            msg = "Non-verbose report. Add &verbose=1 URL parameter to surpress info about tests passed.\n"
+        self.report = self.report + msg
         primary_entities = self.list_OCX_entities()
         self.report = (
             self.report
@@ -389,7 +456,12 @@ def checker():
 @app.route("/info")
 def info():
     info = "Usage <host>:8080?url=<url>&showTurtle=True\n"
-    info = info + "e.g. " + request.host_url + "?url=https://philbarker.github.io/OCXPhysVibWav/l1/\n"
+    info = (
+        info
+        + "e.g. "
+        + request.host_url
+        + "?url=https://philbarker.github.io/OCXPhysVibWav/l1/\n"
+    )
     info = info + "Running on python version" + version
     return escape(info)
 

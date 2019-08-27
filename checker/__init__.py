@@ -1,4 +1,3 @@
-from flask import request
 from sys import version
 from requests import get
 from json import dumps
@@ -25,8 +24,7 @@ class OCXdata:
         properties such as namespace URIs.
     """
 
-    def __init__(self, *args, **kwargs):
-        query_parameters = request.args
+    def __init__(self, query_parameters, *args, **kwargs):
         self.set_output_params(query_parameters)
         self.set_request_url(query_parameters.get("url"))
         self.get_page_data()

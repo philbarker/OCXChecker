@@ -38,6 +38,7 @@ class OCXdata:
     def define_consts(self):
         self.primary_ocx_types = [
             SDO.Course,
+            OER.Course,
             OER.Module,
             OER.Unit,
             OER.Lesson,

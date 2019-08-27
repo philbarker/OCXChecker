@@ -1,11 +1,9 @@
 from sys import version
-from requests import get
-from json import dumps
-from w3lib.html import get_base_url
 from cgi import escape
-from extruct.jsonld import JsonLdExtractor
 from rdflib import Graph, Namespace, Literal, URIRef, BNode
 from rdflib.namespace import RDF, RDFS, NamespaceManager
+from sys import path
+from .pagedata import PageData
 
 SDO = Namespace("http://schema.org/")
 OER = Namespace("http://oerschema.org/")
@@ -26,11 +24,12 @@ class OCXdata:
 
     def __init__(self, query_parameters, *args, **kwargs):
         self.set_output_params(query_parameters)
-        self.set_request_url(query_parameters.get("url"))
-        self.get_page_data()
-        self.make_graph()
+        page_data = PageData(query_parameters.get("url"))
+        self.make_graph(page_data)
         self.make_schema_g()
         self.define_consts()
+        self.page_data = page_data # temp fix to get data to report
+
 
     def define_consts(self):
         self.primary_ocx_types = [
@@ -79,55 +78,23 @@ class OCXdata:
         except:
             self.verbose = True
 
-    def set_request_url(self, url):
-        if url:
-            self.request_url = url
-        else:
-            msg = "Request url not set.\n"
-            msg = (
-                msg
-                + "Try e.g. "
-                + request.host_url
-                + "?url=https://philbarker.github.io/OCXPhysVibWav/l1/\n"
-            )
-            msg = msg + "see " + request.host_url + "/info for more info."
-            raise RuntimeError(msg)
 
-    def get_page_data(self):
-        response = get(self.request_url)
-        if response.status_code < 300:
-            self.status_code = str(response.status_code)
-        else:
-            msg = "error retrieving URL. HTTP status code: " + str(response.status_code)
-            raise RuntimeError(msg)
-        if response.text:
-            self.page = response.text
-            self.base_url = get_base_url(response.text, response.url)
-        else:
-            msg = "No text found at URL " + self.request_url
-            raise RuntimeError(msg)
-
-    def make_graph(self):
-        jslde = JsonLdExtractor()
+    def make_graph(self, page_data):
         context = {
             "@context": {
-                "@base": self.base_url,
+                "@base": page_data.base_url,
                 "sdo": "http://schema.org/",
                 "oer": "http://oerschema.org/",
             }
         }
-        try:
-            data = dumps(jslde.extract(self.page, base_url=self.base_url))
-        except:
-            msg = "Error extracting data page at " + self.request_url
-            raise RuntimeError(msg)
+        data = page_data.data
         if data != "[]":
             self.graph = Graph().parse(data=data, format="json-ld", context=context)
             self.graph.bind("sdo", SDO)
             self.graph.bind("oer", OER)
             self.graph.bind("ocx", OCX)
         else:
-            msg = "No data extracted from page at " + self.request_url
+            msg = "No data extracted from page at " + page_data.request_url
             raise RuntimeError(msg)
 
     def deduplicate(self, mylist):
@@ -411,11 +378,11 @@ class OCXdata:
                 report = report + self.predicate_object_report(p, o)
         return report
 
-    def make_report(self):
+    def make_report(self, page_data):
         self.report = "<pre><code>"
-        self.report = self.report + "Requested URL:\t" + self.request_url + "\n"
-        self.report = self.report + "Base URL:\t" + self.base_url + "\n"
-        self.report = self.report + "Status code:\t" + self.status_code + "\n"
+        self.report = self.report + "Requested URL:\t" + page_data.request_url + "\n"
+        self.report = self.report + "Base URL:\t" + page_data.base_url + "\n"
+        self.report = self.report + "Status code:\t" + page_data.status_code + "\n"
         self.report = (
             self.report
             + "\n=Reporting on Primary OCX Entities and all OCX predicates=\n"

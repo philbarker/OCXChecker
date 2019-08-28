@@ -1,20 +1,15 @@
 from sys import version
 from cgi import escape
 from sys import path
-from rdflib import Graph, Namespace, Literal, URIRef, BNode
-from rdflib.namespace import RDF, RDFS, NamespaceManager
+from rdflib import Namespace, Literal, URIRef, BNode
+from rdflib.namespace import RDF, RDFS
 from .pagedata import PageData
 from .ocxgraph import OCXGraph
+from .schemagraph import SchemaGraph
 
 SDO = Namespace("http://schema.org/")
 OER = Namespace("http://oerschema.org/")
 OCX = Namespace("https://github.com/K12OCX/k12ocx-specs/")
-sdo_schema_location = "./schemas/schema_all.ttl"
-sdo_schema_format = "turtle"
-oer_schema_location = "./schemas/oerschema.ttl"
-oer_schema_format = "turtle"
-ocx_schema_location = "./schemas/ocx.ttl"
-ocx_schema_format = "turtle"
 
 class OCXdata:
     """ A class to comprise the page retrieved from the request url,
@@ -27,10 +22,11 @@ class OCXdata:
         self.set_output_params(query_parameters)
         page_data = PageData(query_parameters.get("url"))
         ocx_graph = OCXGraph(page_data)
-        self.make_schema_g()
+        schema_graph = SchemaGraph()
         self.define_consts()
         self.page_data = page_data # temp fix to get data to report from main
         self.ocx_graph = ocx_graph # also temp fix
+        self.schema_graph = schema_graph
 
     def define_consts(self):
         self.primary_ocx_types = [
@@ -48,20 +44,6 @@ class OCXdata:
             OCX.ReferencedMaterial,
         ]
 
-    def make_schema_g(self):
-        self.schema_g = Graph()
-        try:
-            self.schema_g.parse(location=sdo_schema_location, format=sdo_schema_format)
-        except:
-            raise RuntimeError("cannot make graph of schema.org rdfs")
-        try:
-            self.schema_g.parse(location=oer_schema_location, format=oer_schema_format)
-        except:
-            raise RuntimeError("cannot make graph of OERSchema rdfs")
-        try:
-            self.schema_g.parse(location=ocx_schema_location, format=ocx_schema_format)
-        except:
-            raise RuntimeError("cannot make graph of OCX rdfs")
 
     def set_output_params(self, query_parameters):
         try:
@@ -85,7 +67,7 @@ class OCXdata:
         return list(dict.fromkeys(mylist))
 
     def find_parent_classes(self, aClass, parent_classes=[]):
-        for parent_class in self.schema_g.objects(aClass, RDFS.subClassOf):
+        for parent_class in self.schema_graph.objects(aClass, RDFS.subClassOf):
             parent_classes.extend(parent_class)
             self.find_parent_classes(parent_class, parent_classes)
         return parent_classes
@@ -94,7 +76,7 @@ class OCXdata:
         # totally borked
         # checks that s or superClass of s is in expected domain of p
         # return True if it is, False if not.
-        expected_classes = self.schema_g.objects(p, SDO.domainIncludes)
+        expected_classes = self.schema_graph.objects(p, SDO.domainIncludes)
         subject_class = ocx_graph.objects(s, RDF.type)
         subject_class_path = [RDF.resource, subject_class]
         subject_class_path = subject_class_path.extend(
@@ -168,9 +150,9 @@ class OCXdata:
         for t in ocx_graph.objects(entity, RDF.type):
             type_report = "INFO: RDF type: " + t + "\n"
             c += 1
-            if t in self.schema_g.subjects(RDF.type, RDFS.Class):
-                label = self.schema_g.label(t)
-                parent = self.schema_g.value(t, SDO.isPartOf, None)
+            if t in self.schema_graph.subjects(RDF.type, RDFS.Class):
+                label = self.schema_graph.label(t)
+                parent = self.schema_graph.value(t, SDO.isPartOf, None)
                 if parent:
                     pass
                 else:
@@ -200,7 +182,7 @@ class OCXdata:
 
     def schema_label_string(self, entity, before="", after=""):
         label_string = ""
-        for label_p_val in self.schema_g.preferredLabel(entity):
+        for label_p_val in self.schema_graph.preferredLabel(entity):
             label_string = before + label_p_val[1] + after
         return label_string
 
@@ -208,7 +190,7 @@ class OCXdata:
         # given a class of type t, and optionally a list, it will append
         # the class of which t is a subClass to the list
         parents.append(t)
-        for parent in self.schema_g.objects(t, RDFS.subClassOf):
+        for parent in self.schema_graph.objects(t, RDFS.subClassOf):
             parents = self.get_parent_classes(parent, parents)
         return parents
 
@@ -253,7 +235,7 @@ class OCXdata:
     def subject_predicate_report(self, s, p, ocx_graph):
         valid_subject_types = []
         p_domain_labels = ""
-        for p_domain in self.schema_g.objects(p, SDO.domainIncludes):
+        for p_domain in self.schema_graph.objects(p, SDO.domainIncludes):
             valid_subject_types.append(p_domain)
             p_domain_label = self.schema_label_string(p_domain, "", ", ")
             p_domain_labels = p_domain_labels + p_domain_label
@@ -301,7 +283,7 @@ class OCXdata:
     def predicate_object_report(self, p, o, ocx_graph):
         valid_object_types = []
         p_range_labels = ""
-        for p_range in self.schema_g.objects(p, SDO.rangeIncludes):
+        for p_range in self.schema_graph.objects(p, SDO.rangeIncludes):
             valid_object_types.append(p_range)
             p_range_label = self.schema_label_string(p_range, "", ", ")
             p_range_labels = p_range_labels + p_range_label
@@ -346,7 +328,7 @@ class OCXdata:
         report = "\n\n==Report on OCX predicates found:==\n"
         nsm = ocx_graph.namespace_manager
         for s, p, o in ocx_graph.triples((None, None, None)):
-            if p in self.schema_g.subjects(RDF.type, RDF.Property):
+            if p in self.schema_graph.subjects(RDF.type, RDF.Property):
                 p_name = self.schema_label_string(p, "", "")
                 report = report + "\nReport on predicate in "
                 report = (

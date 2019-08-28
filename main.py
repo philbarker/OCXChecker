@@ -7,7 +7,7 @@ app = Flask(__name__)
 @app.route("/")
 def checker():
     data = OCXdata(request.args)
-    return data.make_report(data.page_data, data.ocx_graph)
+    return data.make_report()
 
 
 @app.route("/info")

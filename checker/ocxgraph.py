@@ -1,5 +1,5 @@
-from rdflib import Graph, Namespace, Literal, URIRef, BNode
-from rdflib.namespace import RDF, RDFS, NamespaceManager
+from rdflib import Graph, Namespace
+from rdflib.namespace import NamespaceManager
 
 SDO = Namespace("http://schema.org/")
 OER = Namespace("http://oerschema.org/")

@@ -362,7 +362,9 @@ class OCXdata:
                 report = report + self.predicate_object_report(p, o, ocx_graph)
         return report
 
-    def make_report(self, page_data, ocx_graph):
+    def make_report(self):
+        page_data = self.page_data
+        ocx_graph = self.ocx_graph
         self.report = "<pre><code>"
         self.report = self.report + "Requested URL:\t" + page_data.request_url + "\n"
         self.report = self.report + "Base URL:\t" + page_data.base_url + "\n"

@@ -1,9 +1,10 @@
 from sys import version
 from cgi import escape
+from sys import path
 from rdflib import Graph, Namespace, Literal, URIRef, BNode
 from rdflib.namespace import RDF, RDFS, NamespaceManager
-from sys import path
 from .pagedata import PageData
+from .ocxgraph import OCXGraph
 
 SDO = Namespace("http://schema.org/")
 OER = Namespace("http://oerschema.org/")
@@ -25,11 +26,11 @@ class OCXdata:
     def __init__(self, query_parameters, *args, **kwargs):
         self.set_output_params(query_parameters)
         page_data = PageData(query_parameters.get("url"))
-        self.make_graph(page_data)
+        ocx_graph = OCXGraph(page_data)
         self.make_schema_g()
         self.define_consts()
-        self.page_data = page_data # temp fix to get data to report
-
+        self.page_data = page_data # temp fix to get data to report from main
+        self.ocx_graph = ocx_graph # also temp fix
 
     def define_consts(self):
         self.primary_ocx_types = [
@@ -79,23 +80,6 @@ class OCXdata:
             self.verbose = True
 
 
-    def make_graph(self, page_data):
-        context = {
-            "@context": {
-                "@base": page_data.base_url,
-                "sdo": "http://schema.org/",
-                "oer": "http://oerschema.org/",
-            }
-        }
-        data = page_data.data
-        if data != "[]":
-            self.graph = Graph().parse(data=data, format="json-ld", context=context)
-            self.graph.bind("sdo", SDO)
-            self.graph.bind("oer", OER)
-            self.graph.bind("ocx", OCX)
-        else:
-            msg = "No data extracted from page at " + page_data.request_url
-            raise RuntimeError(msg)
 
     def deduplicate(self, mylist):
         return list(dict.fromkeys(mylist))
@@ -106,12 +90,12 @@ class OCXdata:
             self.find_parent_classes(parent_class, parent_classes)
         return parent_classes
 
-    def check_domain(self, s, p):
+    def check_domain(self, s, p, ocx_graph):
         # totally borked
         # checks that s or superClass of s is in expected domain of p
         # return True if it is, False if not.
         expected_classes = self.schema_g.objects(p, SDO.domainIncludes)
-        subject_class = self.graph.objects(s, RDF.type)
+        subject_class = ocx_graph.objects(s, RDF.type)
         subject_class_path = [RDF.resource, subject_class]
         subject_class_path = subject_class_path.extend(
             self.find_parent_classes(subject_class)
@@ -123,17 +107,17 @@ class OCXdata:
                 pass
         return False
 
-    def list_OCX_entities(self):
+    def list_OCX_entities(self, ocx_graph):
         ocx_entities = []
         for aType in self.primary_ocx_types:
-            ocx_entities.extend(self.graph.subjects(RDF.type, aType))
+            ocx_entities.extend(ocx_graph.subjects(RDF.type, aType))
         return self.deduplicate(ocx_entities)
 
-    def report_on_name(self, entity):
+    def report_on_name(self, entity, ocx_graph):
         verbose = self.verbose
         name_report = ""
         c = 0
-        for name in self.graph.objects(entity, SDO.name):
+        for name in ocx_graph.objects(entity, SDO.name):
             if verbose:
                 name_report = name_report + "PASS: Name exists.\n"
             if type(name).__name__ == "Literal":
@@ -152,11 +136,11 @@ class OCXdata:
             name_report = name_report + msg
         return name_report
 
-    def report_on_desc(self, entity):
+    def report_on_desc(self, entity, ocx_graph):
         verbose = self.verbose
         desc_report = ""
         c = 0
-        for desc in self.graph.objects(entity, SDO.description):
+        for desc in ocx_graph.objects(entity, SDO.description):
             if verbose:
                 desc_report = desc_report + "PASS: Description exists.\n"
             if type(desc).__name__ == "Literal":
@@ -177,11 +161,11 @@ class OCXdata:
             desc_report = desc_report + msg
         return desc_report
 
-    def report_on_type(self, entity):
+    def report_on_type(self, entity, ocx_graph):
         verbose = self.verbose
         type_report = ""
         c = 0
-        for t in self.graph.objects(entity, RDF.type):
+        for t in ocx_graph.objects(entity, RDF.type):
             type_report = "INFO: RDF type: " + t + "\n"
             c += 1
             if t in self.schema_g.subjects(RDF.type, RDFS.Class):
@@ -207,11 +191,11 @@ class OCXdata:
             type_report = type_report + msg
         return type_report
 
-    def entity_report(self, entity):
+    def entity_report(self, entity, ocx_graph):
         entity_report = "\nReport on " + entity + "\n"
-        entity_report = entity_report + self.report_on_name(entity)
-        entity_report = entity_report + self.report_on_desc(entity)
-        entity_report = entity_report + self.report_on_type(entity)
+        entity_report = entity_report + self.report_on_name(entity, ocx_graph)
+        entity_report = entity_report + self.report_on_desc(entity, ocx_graph)
+        entity_report = entity_report + self.report_on_type(entity, ocx_graph)
         return entity_report
 
     def schema_label_string(self, entity, before="", after=""):
@@ -237,11 +221,11 @@ class OCXdata:
         types_string = types_string[:-2]
         return types_string
 
-    def get_types(self, s):
+    def get_types(self, s, ocx_graph):
         type_name = ""
         types = []
         if type(s) is URIRef:
-            for a_type in self.graph.objects(s, RDF.type):
+            for a_type in ocx_graph.objects(s, RDF.type):
                 type_name = type_name + self.schema_label_string(a_type, "", ", ")
                 types = self.get_parent_classes(a_type, types)
             types = self.deduplicate(types)
@@ -249,7 +233,7 @@ class OCXdata:
                 types = [SDO.URL]
                 type_name = "URIRef"
         elif type(s) is BNode:
-            for a_type in self.graph.objects(s, RDF.type):
+            for a_type in ocx_graph.objects(s, RDF.type):
                 type_name = type_name + self.schema_label_string(a_type, "", ", ")
                 types = self.get_parent_classes(a_type, types)
             types = self.deduplicate(types)
@@ -266,7 +250,7 @@ class OCXdata:
 
         return type_name, types
 
-    def subject_predicate_report(self, s, p):
+    def subject_predicate_report(self, s, p, ocx_graph):
         valid_subject_types = []
         p_domain_labels = ""
         for p_domain in self.schema_g.objects(p, SDO.domainIncludes):
@@ -274,10 +258,10 @@ class OCXdata:
             p_domain_label = self.schema_label_string(p_domain, "", ", ")
             p_domain_labels = p_domain_labels + p_domain_label
         p_domain_labels = p_domain_labels[:-2]
-        type_name, types = self.get_types(s)
+        type_name, types = self.get_types(s, ocx_graph)
         types_string = self.type_string(types)
         s_name = ""
-        for name in self.graph.objects(s, SDO.name):
+        for name in ocx_graph.objects(s, SDO.name):
             s_name = s_name + " " + name
         if s_name == "":
             s_name = "with no name"
@@ -314,7 +298,7 @@ class OCXdata:
             )
         return report
 
-    def predicate_object_report(self, p, o):
+    def predicate_object_report(self, p, o, ocx_graph):
         valid_object_types = []
         p_range_labels = ""
         for p_range in self.schema_g.objects(p, SDO.rangeIncludes):
@@ -322,7 +306,7 @@ class OCXdata:
             p_range_label = self.schema_label_string(p_range, "", ", ")
             p_range_labels = p_range_labels + p_range_label
         p_range_labels = p_range_labels[:-2]
-        type_name, types = self.get_types(o)
+        type_name, types = self.get_types(o, ocx_graph)
         range_valid = False
         for t in types:
             if t in valid_object_types:
@@ -358,10 +342,10 @@ class OCXdata:
             report = report + "FAIL: object type is not in expected range of property\n"
         return report
 
-    def predicate_report(self):
+    def predicate_report(self, ocx_graph):
         report = "\n\n==Report on OCX predicates found:==\n"
-        nsm = self.graph.namespace_manager
-        for s, p, o in self.graph.triples((None, None, None)):
+        nsm = ocx_graph.namespace_manager
+        for s, p, o in ocx_graph.triples((None, None, None)):
             if p in self.schema_g.subjects(RDF.type, RDF.Property):
                 p_name = self.schema_label_string(p, "", "")
                 report = report + "\nReport on predicate in "
@@ -374,11 +358,11 @@ class OCXdata:
                     + escape(o.n3(nsm))
                     + "\n"
                 )
-                report = report + self.subject_predicate_report(s, p)
-                report = report + self.predicate_object_report(p, o)
+                report = report + self.subject_predicate_report(s, p, ocx_graph)
+                report = report + self.predicate_object_report(p, o, ocx_graph)
         return report
 
-    def make_report(self, page_data):
+    def make_report(self, page_data, ocx_graph):
         self.report = "<pre><code>"
         self.report = self.report + "Requested URL:\t" + page_data.request_url + "\n"
         self.report = self.report + "Base URL:\t" + page_data.base_url + "\n"
@@ -392,7 +376,7 @@ class OCXdata:
         else:
             msg = "Non-verbose report. Add &verbose=1 URL parameter to surpress info about tests passed.\n"
         self.report = self.report + msg
-        primary_entities = self.list_OCX_entities()
+        primary_entities = self.list_OCX_entities(ocx_graph)
         self.report = (
             self.report
             + "\n==Primary OCX Entities found:==\n"
@@ -400,10 +384,10 @@ class OCXdata:
             + "\n\n"
         )
         for entity in primary_entities:
-            self.report = self.report + self.entity_report(entity)
-        self.report = self.report + self.predicate_report()
+            self.report = self.report + self.entity_report(entity, ocx_graph)
+        self.report = self.report + self.predicate_report(ocx_graph)
         if self.showTurtle:
-            turtle = self.graph.serialize(format="turtle").decode("utf-8")
+            turtle = ocx_graph.serialize(format="turtle").decode("utf-8")
             self.report = self.report + "Data:\n-----\n" + escape(turtle)
         self.report = self.report + "</code></pre>"
         return self.report

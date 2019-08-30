@@ -14,6 +14,19 @@ def do_checks(self):
     return checks.results
 
 
+class CheckResult:
+    def __init__(self, n, d, p=False):
+        self.name = n
+        self.description = d
+        self.passes = p
+        self.info = []
+        self.warnings = []
+        self.results = []
+
+    def add_info(self, info):
+        self.info.append(info)
+
+
 class DataChecks:
     from .utils import (
         deduplicate,
@@ -29,14 +42,7 @@ class DataChecks:
         self.results = {}
 
     def subject_predicate_check(self, s, p):
-        results = {
-            "name": "subject check",
-            "description": "subject is in predicate's domain",
-            "passes": True,
-            "info": [],
-            "warnings": [],
-            "results": [],
-        }
+        result = CheckResult("subject check", "subject is in predicate's domain", True)
         valid_subject_types = []
         p_domain_labels = ""
         for p_domain in self.schema_graph.objects(p, SDO.domainIncludes):
@@ -51,45 +57,38 @@ class DataChecks:
             s_name = s_name + " " + name
         if s_name == "":
             s_name = "with no name"
-        results["info"].append("used on object named " + s_name)
-        results["info"].append("object is of type " + types_string)
-        results["info"].append("property has expected domain " + p_domain_labels)
+        result.add_info("used on object named " + s_name)
+        result.add_info("object is of type " + types_string)
+        result.add_info("property has expected domain " + p_domain_labels)
         domain_valid = False
         for t in types:
             if t in valid_subject_types:
                 domain_valid = True
         if domain_valid:
-            results["passes"] = True
+            result.passes = True
         elif type(s) is BNode:
-            results["passes"] = False
+            result.passes = False
             info = (
                 "an untyped BNode object has been used where "
                 + p_domain_labels
                 + " was expected. Please add object type."
             )
-            results["info"].append(info)
+            result.add_info(info)
         elif type(s) is URIRef:
-            results["passes"] = True
+            result.passes = True
             info = (
                 "a URI reference for an object of unknown type has been used (it may not be on this page) where "
                 + p_domain_labels
                 + " was expected. You should check the object at the end of the URI is of the right type. You could add its type here to stop seeing this warning "
             )
-            results["info"].append(info)
+            result.add_info(info)
         else:
-            results["passes"] = False
-            results["info"].append("subject type is not in expected domain of property")
-        return results
+            result.passes = False
+            result.add_info("subject type is not in expected domain of property")
+        return result
 
     def predicate_object_check(self, p, o):
-        results = {
-            "name": "object check",
-            "description": "object is in predicate's range",
-            "passes": False,
-            "info": [],
-            "warnings": [],
-            "results": [],
-        }
+        result = CheckResult("object check", "object is in predicate's range", True)
         valid_object_types = []
         p_range_labels = ""
         for p_range in self.schema_graph.objects(p, SDO.rangeIncludes):
@@ -102,52 +101,49 @@ class DataChecks:
         for t in types:
             if t in valid_object_types:
                 range_valid = True
-        results["info"].append("property has expected range " + p_range_labels)
-        results["info"].append("points to object of type " + self.type_string(types))
+        result.add_info("property has expected range " + p_range_labels)
+        result.add_info("points to object of type " + self.type_string(types))
         if range_valid:
-            results["passes"] = True
+            result.passes = True
         elif type(o) is Literal:
-            results["passes"] = True
+            result.passes = True
             warning = (
                 "text has been used where "
                 + p_range_labels
                 + " was expected. This is not best practice "
             )
-            results["warnings"].append(warning)
+            result.warnings.append(warning)
         elif type(o) is BNode:
-            results["passes"] = False
+            result.passes = False
             warning = (
                 "an untyped BNode object has been used where "
                 + p_range_labels
                 + " was expected. Please add object type "
             )
-            results["warnings"].append(warning)
+            result.warnings.append(warning)
         elif type(o) is URIRef:
-            results["passes"] = True
+            result.passes = True
             warning = (
                 "a URI reference for an object of unknown type has been used (it may not be on this page) where "
                 + p_range_labels
                 + " was expected. You should check the object at the end of the URI is of the right type. You could add its type here to stop seeing this warning "
             )
-            results["warnings"].append(warning)
+            result.warnings.append(warning)
         else:
-            results["passes"] = False
-        return results
+            result.passes = False
+        return result
 
     def check_predicate(self, s, p, o):
         # checks predicate from single statement
-        results = {
-            "name": "predicate check for " + p,
-            "description": "subject and object are in expected domain and range",
-            "passes": True,
-            "info": ["predicate in statement " + " ".join([s, p, o])],
-            "warnings": [],
-            "results": [
-                self.subject_predicate_check(s, p),
-                self.predicate_object_check(p, o),
-            ],
-        }
-        return results
+        result = CheckResult(
+            "predicate check for " + p,
+            "subject and object are in expected domain and range",
+            True,
+        )
+        result.add_info("predicate in statement " + " ".join([s, p, o]))
+        result.results.append(self.subject_predicate_check(s, p))
+        result.results.append(self.predicate_object_check(p, o))
+        return result
 
     def check_all_predicates(self):
         results = {

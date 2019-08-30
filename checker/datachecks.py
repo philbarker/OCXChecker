@@ -5,6 +5,15 @@ from cgi import escape
 SDO = Namespace("http://schema.org/")
 
 
+def do_checks(self):
+    # refactor this into datachecks.py to set results of DataChecks
+    checks = DataChecks(self.ocx_graph, self.schema_graph)
+    checks.find_primary_entities(self.primary_ocx_types)
+    checks.check_named_entities()
+    checks.check_all_predicates()
+    return checks.results
+
+
 class DataChecks:
     from .utils import (
         deduplicate,
@@ -42,36 +51,35 @@ class DataChecks:
             s_name = s_name + " " + name
         if s_name == "":
             s_name = "with no name"
-        results['info'].append("used on object named " + s_name)
-        results['info'].append("object is of type " + types_string)
-        results['info'].append("property has expected domain " +  p_domain_labels)
+        results["info"].append("used on object named " + s_name)
+        results["info"].append("object is of type " + types_string)
+        results["info"].append("property has expected domain " + p_domain_labels)
         domain_valid = False
         for t in types:
             if t in valid_subject_types:
                 domain_valid = True
         if domain_valid:
-            results['passes'] = True
+            results["passes"] = True
         elif type(s) is BNode:
-            results['passes'] = False
+            results["passes"] = False
             info = (
                 "an untyped BNode object has been used where "
                 + p_domain_labels
                 + " was expected. Please add object type."
             )
-            results['info'].append(info)
+            results["info"].append(info)
         elif type(s) is URIRef:
-            results['passes'] = True
+            results["passes"] = True
             info = (
                 "a URI reference for an object of unknown type has been used (it may not be on this page) where "
                 + p_domain_labels
                 + " was expected. You should check the object at the end of the URI is of the right type. You could add its type here to stop seeing this warning "
             )
-            results['info'].append(info)
+            results["info"].append(info)
         else:
-            results['passes'] = False
-            results['info'].append( "subject type is not in expected domain of property" )
+            results["passes"] = False
+            results["info"].append("subject type is not in expected domain of property")
         return results
-
 
     def predicate_object_check(self, p, o):
         results = {
@@ -127,7 +135,7 @@ class DataChecks:
         return results
 
     def check_predicate(self, s, p, o):
-        #checks predicate from single statement
+        # checks predicate from single statement
         results = {
             "name": "check predicate " + p,
             "description": "subject and object are in expected domain and range",
@@ -136,11 +144,10 @@ class DataChecks:
             "warnings": [],
             "results": [
                 self.subject_predicate_check(s, p),
-                self.predicate_object_check(p, o)
-            ]
+                self.predicate_object_check(p, o),
+            ],
         }
         return results
-
 
     def check_all_predicates(self):
         results = {
@@ -153,9 +160,8 @@ class DataChecks:
         }
         for s, p, o in self.graph.triples((None, None, None)):
             if p in self.schema_graph.subjects(RDF.type, RDF.Property):
-                results['results'].append(self.check_predicate(s, p, o))
+                results["results"].append(self.check_predicate(s, p, o))
         self.results["predicate_checks"] = results
-
 
     def find_primary_entities(self, primary_types):
         entities = []

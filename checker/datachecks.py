@@ -137,7 +137,7 @@ class DataChecks:
     def check_predicate(self, s, p, o):
         # checks predicate from single statement
         results = {
-            "name": "check predicate " + p,
+            "name": "predicate check for " + p,
             "description": "subject and object are in expected domain and range",
             "passes": True,
             "info": ["predicate in statement " + " ".join([s, p, o])],

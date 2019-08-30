@@ -19,7 +19,7 @@ class Reports:
         self.report = render_template("head.html")
 
     def header(self, request_url, base_url, status_code):
-        self.report = render_template(
+        self.report = self.report + render_template(
             "header.html",
             request_url=request_url,
             base_url=base_url,

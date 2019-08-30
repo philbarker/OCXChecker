@@ -4,7 +4,7 @@ from extruct.jsonld import JsonLdExtractor
 from json import dumps
 
 
-class PageData():
+class PageData:
     """Data returned from a web page.
     Has properties:
        request_url: the URL from which data was requested
@@ -14,6 +14,7 @@ class PageData():
        data: JSON extracted from the page (if any)
     Check the status code before trying to read any retrieved data.
     """
+
     def __init__(self, url, *args, **kwargs):
         self.set_request_url(url)
         self.retrieve_page()

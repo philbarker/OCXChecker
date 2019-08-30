@@ -1,0 +1,14 @@
+<header>
+  <h1>OCXChecker report</h1>
+  <h2>Report parameters</h2>
+  <ul id="input-summary">
+    <li><strong>Requested URL:</strong> {{request_url}} </li>
+    <li><strong>Base URL:</strong> {{base_url}} </li>
+    <li><strong>Status code:</strong>  {{status_code}} </li>
+  </ul>
+  {% if verbose %}
+  <p>Verbose report. Add &verbose=0 URL parameter to suppress info about tests passed.</p>
+  {% else %}
+  <p>Non-verbose report. Add &verbose=1 URL parameter to include info about tests passed.</p>
+  {% endif %}
+</header>

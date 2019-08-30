@@ -1,0 +1,19 @@
+<section id="primary_entities">
+  <h2>Primary entities present report</h2>
+  <p><strong>Result:</strong>
+  {% if results.result %}
+    Pass, at least one required entity was found
+  </p>
+    {% if verbose %}
+    <p>The following primary entities were found:</p>
+    <ul>
+      {% for entity in results.info -%}
+      <li>{{entity | e}}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  {% else %}
+    Fail, no required entities were found.
+  </p>
+  {% endif %}
+</section>

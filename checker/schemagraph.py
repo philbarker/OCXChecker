@@ -7,6 +7,7 @@ oer_schema_format = "turtle"
 ocx_schema_location = "./schemas/ocx.ttl"
 ocx_schema_format = "turtle"
 
+
 class SchemaGraph(Graph):
     def __init__(self):
         super().__init__()

@@ -5,6 +5,7 @@ SDO = Namespace("http://schema.org/")
 OER = Namespace("http://oerschema.org/")
 OCX = Namespace("https://github.com/K12OCX/k12ocx-specs/")
 
+
 class OCXGraph(Graph):
     def __init__(self, page_data):
         super().__init__()

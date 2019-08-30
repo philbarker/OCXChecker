@@ -1,0 +1,33 @@
+<section id="enitity-check">
+  <h2>Named entity attributes report</h2>
+  {% for key in results %}
+  <h3>Report on {{ key }}</h3>
+    {% if results[key]['entity_name_check']['passes'] %} PASS: Name exists
+    {% else %} FAIL: No name
+    {% endif %} <br />
+    {% for i in results[key]['entity_name_check']['info'] %}
+      INFO: {{ i }} <br />
+    {% endfor %}
+    {% for w in results[key]['entity_name_check']['warnings'] %}
+      WARNING: {{ w }} <br />
+    {% endfor %}
+    {% if results[key]['entity_description_check']['passes'] %} PASS: description is valid or absent
+    {% else %} FAIL: the description is invalid
+    {% endif %} <br />
+    {% for i in results[key]['entity_description_check']['info'] %}
+      INFO: {{ i }} <br />
+    {% endfor %}
+    {% for w in results[key]['entity_description_check']['warnings'] %}
+      WARNING: {{ w }} <br />
+    {% endfor %}
+    {% if results[key]['type_check']['passes'] %} PASS: {{results[key]['type_check']['descr']}}
+    {% else %} FAIL: {{results[key]['type_check']['descr']}}
+    {% endif %} <br />
+    {% for i in results[key]['type_check']['info'] %}
+      INFO: {{ i }} <br />
+    {% endfor %}
+    {% for w in results[key]['type_check']['warnings'] %}
+      WARNING: {{ w }} <br />
+    {% endfor %}
+  {% endfor %}
+</section>

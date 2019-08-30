@@ -6,27 +6,52 @@ from rdflib.namespace import RDF, RDFS
 from .pagedata import PageData
 from .ocxgraph import OCXGraph
 from .schemagraph import SchemaGraph
+from .datachecks import DataChecks
+from .reports import Reports
 
 SDO = Namespace("http://schema.org/")
 OER = Namespace("http://oerschema.org/")
 OCX = Namespace("https://github.com/K12OCX/k12ocx-specs/")
 
-class OCXdata:
+
+class Checker:
     """ A class to comprise the page retrieved from the request url,
         the Graph of JSON-LD extracted from that page, a Graph of
         the RDFS for vocabularies used, plus various parameters and
-        properties such as namespace URIs.
+        properties such as namespace URIs, with methods for checking
+        these.
     """
 
     def __init__(self, query_parameters, *args, **kwargs):
         self.set_output_params(query_parameters)
         page_data = PageData(query_parameters.get("url"))
         ocx_graph = OCXGraph(page_data)
-        schema_graph = SchemaGraph()
         self.define_consts()
-        self.page_data = page_data # temp fix to get data to report from main
-        self.ocx_graph = ocx_graph # also temp fix
+        schema_graph = SchemaGraph()
+        self.page_data = page_data  # temp fix to get data to report from main
+        self.ocx_graph = ocx_graph  # also temp fix
         self.schema_graph = schema_graph
+
+    def do_checks(self):
+        # refactor this into datachecks.py to set results of DataChecks
+        checks = DataChecks(self.ocx_graph, self.schema_graph)
+        checks.find_primary_entities(self.primary_ocx_types)
+        checks.check_named_entities()
+        checks.check_all_predicates()
+        return checks.results
+
+    def make_report(self, results):
+        # refactor this into reports.py to set report of Reports
+        report = Reports(self.verbose)
+        report.header(
+            self.page_data.request_url,
+            self.page_data.base_url,
+            self.page_data.status_code,
+        )
+        report.sections(results)
+        report.turtle(self.ocx_graph)
+        report.end_report
+        return report.report
 
     def define_consts(self):
         self.primary_ocx_types = [
@@ -44,7 +69,6 @@ class OCXdata:
             OCX.ReferencedMaterial,
         ]
 
-
     def set_output_params(self, query_parameters):
         try:
             if query_parameters.get("showTurtle") == "1":
@@ -60,8 +84,6 @@ class OCXdata:
                 self.verbose = False
         except:
             self.verbose = True
-
-
 
     def deduplicate(self, mylist):
         return list(dict.fromkeys(mylist))
@@ -90,6 +112,7 @@ class OCXdata:
         return False
 
     def list_OCX_entities(self, ocx_graph):
+        # done
         ocx_entities = []
         for aType in self.primary_ocx_types:
             ocx_entities.extend(ocx_graph.subjects(RDF.type, aType))
@@ -174,6 +197,7 @@ class OCXdata:
         return type_report
 
     def entity_report(self, entity, ocx_graph):
+
         entity_report = "\nReport on " + entity + "\n"
         entity_report = entity_report + self.report_on_name(entity, ocx_graph)
         entity_report = entity_report + self.report_on_desc(entity, ocx_graph)
@@ -344,7 +368,7 @@ class OCXdata:
                 report = report + self.predicate_object_report(p, o, ocx_graph)
         return report
 
-    def make_report(self):
+    def make_report_0(self):
         page_data = self.page_data
         ocx_graph = self.ocx_graph
         self.report = "<pre><code>"

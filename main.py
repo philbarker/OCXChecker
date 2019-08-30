@@ -1,13 +1,16 @@
 from flask import Flask, request
-from checker import OCXdata
+from checker import Checker
 
 app = Flask(__name__)
 
 
 @app.route("/")
 def checker():
-    data = OCXdata(request.args)
-    return data.make_report()
+    checker = Checker(request.args)
+#    return checker.make_report_0()
+    results = checker.do_checks()
+    report = checker.make_report(results)
+    return report
 
 
 @app.route("/info")

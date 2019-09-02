@@ -28,7 +28,7 @@ class CheckResult:
 
 
 class DataChecks:
-    from .utils import (
+    from .checkutils import (
         deduplicate,
         schema_label_string,
         type_string,

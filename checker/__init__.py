@@ -2,10 +2,27 @@ from rdflib import Namespace
 from .pagedata import PageData
 from .ocxgraph import OCXGraph
 from .schemagraph import SchemaGraph
+from .datachecks import DataChecks, CheckResult
+from .reports import Reports
 
 SDO = Namespace("http://schema.org/")
 OER = Namespace("http://oerschema.org/")
 OCX = Namespace("https://github.com/K12OCX/k12ocx-specs/")
+
+primary_ocx_types = [
+    SDO.Course,
+    OER.Course,
+    OER.Module,
+    OER.Unit,
+    OER.Lesson,
+    OER.Activty,
+    OER.Assessment,
+    OER.SupportingMaterial,
+    OER.SupplementalMaterial,
+    OER.ReferencedMaterial,
+    OCX.SupplementalMaterial,
+    OCX.ReferencedMaterial,
+]
 
 
 class Checker:
@@ -16,31 +33,33 @@ class Checker:
         these & reporting on the checks.
     """
 
-    from .datachecks import DataChecks, do_checks
-    from .reports import Reports, make_report
-
     def __init__(self, query_parameters, *args, **kwargs):
         self.set_output_params(query_parameters)
         self.page_data = PageData(query_parameters.get("url"))
         self.ocx_graph = OCXGraph(self.page_data)
-        self.define_consts()
         self.schema_graph = SchemaGraph()
 
-    def define_consts(self):
-        self.primary_ocx_types = [
-            SDO.Course,
-            OER.Course,
-            OER.Module,
-            OER.Unit,
-            OER.Lesson,
-            OER.Activty,
-            OER.Assessment,
-            OER.SupportingMaterial,
-            OER.SupplementalMaterial,
-            OER.ReferencedMaterial,
-            OCX.SupplementalMaterial,
-            OCX.ReferencedMaterial,
-        ]
+    def do_checks(self):
+        checks = DataChecks(self.ocx_graph, self.schema_graph)
+        result = CheckResult(
+            n="All checks",
+            d="checks on findings primary entities, properties of names entities and subject and object of all predicates",
+            p=True,
+        )
+        result.add_result(checks.find_primary_entities(primary_ocx_types))
+        result.add_result(checks.check_all_named_entities())
+        result.add_result(checks.check_all_predicates())
+        return result
+
+    def make_report(self, result):
+        report = Reports(self.verbose)
+        report.header(
+            self.page_data.request_url, self.page_data.base_url, self.page_data.status_code
+        )
+        report.sections(result)
+        report.turtle(self.ocx_graph)
+        report.end_report
+        return report.report
 
     def set_output_params(self, query_parameters):
         try:

@@ -1,17 +1,6 @@
 from flask import render_template
 
 
-def make_report(self, result):
-    report = Reports(self.verbose)
-    report.header(
-        self.page_data.request_url, self.page_data.base_url, self.page_data.status_code
-    )
-    report.sections(result)
-    report.turtle(self.ocx_graph)
-    report.end_report
-    return report.report
-
-
 class Reports:
     def __init__(self, verbose):
         self.verbose = verbose

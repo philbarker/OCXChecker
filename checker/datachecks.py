@@ -5,17 +5,6 @@ from cgi import escape
 SDO = Namespace("http://schema.org/")
 
 
-def do_checks(self):
-    checks = DataChecks(self.ocx_graph, self.schema_graph)
-    result = CheckResult(
-        n="All checks", d="checks on findings primary entities, properties of names entities and subject and object of all predicates", p=True,
-    )
-    result.add_result(checks.find_primary_entities(self.primary_ocx_types))
-    result.add_result(checks.check_all_named_entities())
-    result.add_result(checks.check_all_predicates())
-    return result
-
-
 class CheckResult(dict):
     def __init__(self, n, d, p=False):
         self["name"] = n
@@ -24,7 +13,6 @@ class CheckResult(dict):
         self["info"] = []
         self["warnings"] = []
         self["results"] = []
-
 
     def add_info(self, i):
         if type(i) is str:
@@ -192,9 +180,9 @@ class DataChecks:
 
     def check_all_predicates(self):
         result = CheckResult(
-            n = "predicate checks",
-            d  = "subjects are in predicates' domains, and objects are in predicates' ranges for all statements",
-            p =  True,
+            n="predicate checks",
+            d="subjects are in predicates' domains, and objects are in predicates' ranges for all statements",
+            p=True,
         )
         for s, p, o in self.graph.triples((None, None, None)):
             if p in self.schema_graph.subjects(RDF.type, RDF.Property):

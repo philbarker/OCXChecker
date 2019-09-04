@@ -9,7 +9,7 @@ def checker():
     checker = Checker(request.args)
     result = checker.do_checks()
     report = checker.make_report(result)
-    return report
+    return report.html
 
 
 @app.route("/info")

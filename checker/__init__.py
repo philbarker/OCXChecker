@@ -3,7 +3,7 @@ from .pagedata import PageData
 from .ocxgraph import OCXGraph
 from .schemagraph import SchemaGraph
 from .datachecks import DataChecks, CheckResult
-from .reports import Reports
+from .reports import Report
 
 SDO = Namespace("http://schema.org/")
 OER = Namespace("http://oerschema.org/")
@@ -52,14 +52,14 @@ class Checker:
         return result
 
     def make_report(self, result):
-        report = Reports(self.verbose)
+        report = Report(self.verbose)
         report.header(
             self.page_data.request_url, self.page_data.base_url, self.page_data.status_code
         )
         report.sections(result)
         report.turtle(self.ocx_graph)
         report.end_report
-        return report.report
+        return report
 
     def set_output_params(self, query_parameters):
         try:

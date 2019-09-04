@@ -1,0 +1,22 @@
+<section id="primary_entities">
+  <h2>Report on {{results.name}}</h2>
+  <p>
+  {% if results.passes %}
+    <em class="pass">PASS:</em> {{results.description}}<br />
+  </p>
+    {% if verbose %}
+    <p>The following primary entities were found:</p>
+    <ul>
+      {% for entity in results.info -%}
+      <li>{{entity | e}}</li>
+      {% endfor %}
+    </ul>
+    {% endif %} {# end verbose block #}
+    {% else %}<em class="fail">FAIL</em> {{results.name}}
+    {% for i in results.info -%}
+      {{i | e}}
+    {% endfor %}
+
+  </p>
+  {% endif %}
+</section>

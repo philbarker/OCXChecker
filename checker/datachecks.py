@@ -6,25 +6,52 @@ SDO = Namespace("http://schema.org/")
 
 
 def do_checks(self):
-    # refactor this into datachecks.py to set results of DataChecks
     checks = DataChecks(self.ocx_graph, self.schema_graph)
-    checks.find_primary_entities(self.primary_ocx_types)
-    checks.check_named_entities()
-    checks.check_all_predicates()
-    return checks.results
+    result = CheckResult(
+        n="All checks", d="checks on findings primary entities, properties of names entities and subject and object of all predicates", p=True,
+    )
+    result.add_result(checks.find_primary_entities(self.primary_ocx_types))
+    result.add_result(checks.check_all_named_entities())
+    result.add_result(checks.check_all_predicates())
+    return result
 
 
-class CheckResult:
+class CheckResult(dict):
     def __init__(self, n, d, p=False):
-        self.name = n
-        self.description = d
-        self.passes = p
-        self.info = []
-        self.warnings = []
-        self.results = []
+        self["name"] = n
+        self["description"] = d
+        self["passes"] = p
+        self["info"] = []
+        self["warnings"] = []
+        self["results"] = []
 
-    def add_info(self, info):
-        self.info.append(info)
+
+    def add_info(self, i):
+        if type(i) is str:
+            self["info"].append(i)
+        elif type(i) is list:
+            self["info"] = self["info"] + i
+        else:
+            pass  # to do: exception handling
+
+    def add_warning(self, w):
+        if type(w) is str:
+            self["warnings"].append(w)
+        elif type(w) is list:
+            self["warnings"] = self["warnings"] + w
+        else:
+            pass  # to do: exception handling
+
+    def add_result(self, r):
+        if type(r) is CheckResult:
+            self["results"].append(r)
+        elif type(r) is list:
+            self["results"] = self["results"] + r
+        else:
+            pass  # to do: exception handling
+
+    def set_passes(self, p: bool):
+        self["passes"] = p
 
 
 class DataChecks:
@@ -39,7 +66,23 @@ class DataChecks:
     def __init__(self, graph, schema_graph):
         self.graph = graph
         self.schema_graph = schema_graph
-        self.results = {}
+
+    def find_primary_entities(self, primary_types):
+        result = CheckResult(
+            n="primary entities present",
+            d="check that there is at least one primary entity",
+            p=False,
+        )
+        entities = []
+        for aType in primary_types:
+            entities.extend(self.graph.subjects(RDF.type, aType))
+        result.add_info(self.deduplicate(entities))
+        if len(result["info"]) < 1:
+            result.set_passes(False)
+            result.add_info("no primary entities were found")
+        else:
+            result.set_passes(True)
+        return result
 
     def subject_predicate_check(self, s, p):
         result = CheckResult("subject check", "subject is in predicate's domain", True)
@@ -65,9 +108,9 @@ class DataChecks:
             if t in valid_subject_types:
                 domain_valid = True
         if domain_valid:
-            result.passes = True
+            result.set_passes(True)
         elif type(s) is BNode:
-            result.passes = False
+            result.set_passes(False)
             info = (
                 "an untyped BNode object has been used where "
                 + p_domain_labels
@@ -75,7 +118,7 @@ class DataChecks:
             )
             result.add_info(info)
         elif type(s) is URIRef:
-            result.passes = True
+            result.set_passes(True)
             info = (
                 "a URI reference for an object of unknown type has been used (it may not be on this page) where "
                 + p_domain_labels
@@ -83,12 +126,14 @@ class DataChecks:
             )
             result.add_info(info)
         else:
-            result.passes = False
+            result.set_passes(False)
             result.add_info("subject type is not in expected domain of property")
         return result
 
     def predicate_object_check(self, p, o):
-        result = CheckResult("object check", "object is in predicate's range", True)
+        result = CheckResult(
+            "object range check", "object is in predicate's range", True
+        )
         valid_object_types = []
         p_range_labels = ""
         for p_range in self.schema_graph.objects(p, SDO.rangeIncludes):
@@ -104,33 +149,33 @@ class DataChecks:
         result.add_info("property has expected range " + p_range_labels)
         result.add_info("points to object of type " + self.type_string(types))
         if range_valid:
-            result.passes = True
+            result.set_passes(True)
         elif type(o) is Literal:
-            result.passes = True
+            result.set_passes(True)
             warning = (
                 "text has been used where "
                 + p_range_labels
                 + " was expected. This is not best practice "
             )
-            result.warnings.append(warning)
+            result.add_warning(warning)
         elif type(o) is BNode:
-            result.passes = False
+            result.set_passes(False)
             warning = (
                 "an untyped BNode object has been used where "
                 + p_range_labels
                 + " was expected. Please add object type "
             )
-            result.warnings.append(warning)
+            result.add_warning(warning)
         elif type(o) is URIRef:
-            result.passes = True
+            result.set_passes(True)
             warning = (
                 "a URI reference for an object of unknown type has been used (it may not be on this page) where "
                 + p_range_labels
                 + " was expected. You should check the object at the end of the URI is of the right type. You could add its type here to stop seeing this warning "
             )
-            result.warnings.append(warning)
+            result.add_warning(warning)
         else:
-            result.passes = False
+            result.set_passes(False)
         return result
 
     def check_predicate(self, s, p, o):
@@ -141,67 +186,61 @@ class DataChecks:
             True,
         )
         result.add_info("predicate in statement " + " ".join([s, p, o]))
-        result.results.append(self.subject_predicate_check(s, p))
-        result.results.append(self.predicate_object_check(p, o))
+        result["results"].append(self.subject_predicate_check(s, p))
+        result["results"].append(self.predicate_object_check(p, o))
         return result
 
     def check_all_predicates(self):
-        results = {
-            "name": "predicate checks",
-            "description": "subjects are in predicates' domains and objects are in predicates' ranges",
-            "passes": True,
-            "info": [],
-            "warnings": [],
-            "results": [],
-        }
+        result = CheckResult(
+            n = "predicate checks",
+            d  = "subjects are in predicates' domains, and objects are in predicates' ranges for all statements",
+            p =  True,
+        )
         for s, p, o in self.graph.triples((None, None, None)):
             if p in self.schema_graph.subjects(RDF.type, RDF.Property):
-                results["results"].append(self.check_predicate(s, p, o))
-        self.results["predicate_checks"] = results
+                result["results"].append(self.check_predicate(s, p, o))
+        return result
 
-    def find_primary_entities(self, primary_types):
-        entities = []
-        primary_entities = {}
-        primary_entities["info"] = []
-        primary_entities["result"] = None
-        for aType in primary_types:
-            entities.extend(self.graph.subjects(RDF.type, aType))
-        primary_entities["info"] = self.deduplicate(entities)
-        if len(primary_entities["info"]) < 1:
-            primary_entities["result"] = False
-        else:
-            primary_entities["result"] = True
-        self.results["primary_entities"] = primary_entities
+    def check_named_entity(self, e):
+        uri = str(e)
+        result = CheckResult(
+            n="check entity " + uri,
+            d="entity " + uri + " has name, description and type",
+            p=True,
+        )
+        result.add_result(self.check_entity_name(e))
+        result.add_result(self.check_entity_description(e))
+        result.add_result(self.check_entity_type(e))
+        for r in result["results"]:
+            # set passes to true if all sub-result passes are true
+            result.set_passes(result["passes"] and r["passes"])
+        return result
 
-    def check_named_entities(self):
-        self.results["entity_check"] = {}
+    def check_all_named_entities(self):
         named_entities = []
-        # find everything that has a type
+        result = CheckResult(
+            n="all named entity checks",
+            d="entities with URI have name, description and type",
+            p=True,
+        )
+        # find everything that has a type and is not a blank node
         for e in self.graph.subjects(RDF.type, None):
             if type(e) != BNode:
                 named_entities.append(e)
         named_entities = self.deduplicate(named_entities)
         for e in named_entities:
             uri = str(e)
-            results = {}
-            results["name"] = "Check named entities"
-            results["description"] = "the named entities have key properties"
-            results["entity_name_check"] = self.check_entity_name(e)
-            results["entity_description_check"] = self.check_entity_description(e)
-            results["type_check"] = self.check_entity_type(e)
-            self.results["entity_check"][uri] = results
-        # report_on_type(entity, ocx_graph)
+            result.add_result(self.check_named_entity(e))
+        return result
 
     def check_entity_type(self, e):
         uri = str(e)
-        passes = False
-        warnings = []
-        info = []
-        name = "type check on " + uri
-        descr = "entity has known RDF:type"
+        result = CheckResult(
+            n="check entity type", d="entity has known RDF:type", p=False
+        )
         for t in self.graph.objects(e, RDF.type):
-            passes = True
-            info.append("RDF type is " + t)
+            result.set_passes(True)
+            result.add_info("RDF type is " + t)
             if t in self.schema_graph.subjects(RDF.type, RDFS.Class):
                 label = self.schema_graph.label(t)
                 parent = self.schema_graph.value(t, SDO.isPartOf, None)
@@ -209,66 +248,64 @@ class DataChecks:
                     pass
                 else:
                     parent = "oerschema.org"
-                info.append("this type is known as " + label + " from " + parent)
+                msg = "this type is known as " + label + " from " + parent
+                result.add_info(msg)
             else:
-                warnings.append("this type is unknown")
-        if not passes:
-            info.append("this entity is of unspecified type.")
-        result = {
-            "name": name,
-            "descr": descr,
-            "passes": passes,
-            "info": info,
-            "warnings": warnings,
-        }
+                result.add_warning("this type is unknown")
+        if not result["passes"]:
+            result.set_passes(False)
+            result.add_info("this entity is of unspecified type.")
         return result
 
     def check_entity_description(self, e):
         c = 0
-        passes = True
-        info = []
-        warnings = []
         literal = True
+        result = CheckResult(
+            n="check entity description", d="description is string or absent", p=True
+        )
         for description in self.graph.objects(e, SDO.description):
             c += 1
             if type(description).__name__ == "Literal":
-                passes = True
-                info.append("Description = " + description[0:70])
+                result.set_passes(True)
+                result.add_info("Description = " + description[0:70])
             else:
                 literal = False
-                info.append("Description is not a literal")
+                result.add_info("Description is not a literal")
+                result.set_passes(False)
         if c > 1:
-            warnings.append(
-                "Having more than one description may be ambiguous, consider using sdo:alternateName."
-            )
+            msg = "Having more than one description may be ambiguous."
+            result.add_warning(msg)
         elif c < 1:
-            warnings.append("No sdo.description. Descriptions are useful.")
+            msg = "No sdo.description. Descriptions are useful."
+            result.add_warning(msg)
         if not literal:
-            passes = False
-        result = {"passes": passes, "info": info, "warnings": warnings}
+            result.set_passes(False)
         return result
 
     def check_entity_name(self, e):
         c = 0
-        passes = False
-        info = []
-        warnings = []
         literal = True
+        result = CheckResult(
+            n="Check entity name",
+            d="entity has at least one name property, name is a string",
+            p=False,
+        )
         for name in self.graph.objects(e, SDO.name):
             c += 1
             if type(name).__name__ == "Literal":
-                passes = True
-                info.append("Name = " + name)
+                result.add_info("Name = " + name)
+                result.set_passes(True)
             else:
                 literal = False
-                info.append("Name is not a literal")
+                result.add_info("name is not a literal")
         if c > 1:
-            warnings.append(
-                "Having more than one name may be ambiguous, consider using sdo:alternateName."
-            )
+            msg = "Having more than one name may be ambiguous, consider using sdo:alternateName."
+            result.add_warning(msg)
         elif c < 1:
-            warnings.append("No sdo.name found. Names are useful.")
+            msg = "No sdo.name found. Names are useful."
+            result.set_passes(False)
+            result.add_warning(msg)
         if not literal:
             passes = False
-        result = {"passes": passes, "info": info, "warnings": warnings}
+            result.set_passes(False)
         return result

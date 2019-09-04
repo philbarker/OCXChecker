@@ -1,6 +1,6 @@
 <section id="predicate-checks">
-  <h2>Report on {{results['name']}}</h2> {# check_all_predicates #}
-  <p>Check that {{results['description']}} for all statements.</p>
+  <h2>Report on {{results.name}}</h2> {# check_all_predicates #}
+  <p>Check that {{results['description']}}.</p>
   {% for result in results['results'] %} {# check predicate p #}
   <h3>Report on {{result['name'] | e}}</h3>
   <p>Check that {{result['description']}}<br />
@@ -9,7 +9,7 @@
     {% endfor %}
     {% for result in result['results'] %} {# check domain + range #}
       {% if result['passes'] %}<em class="pass">PASS:</em> {{result['description']}}<br />
-      {% else %}<em class="fail">FAIL</em><br />
+      {% else %}<em class="fail">FAIL</em> {{result['name']}}<br />
       {% endif %}
       {% for i in result['info'] %}
         <em class="info">INFO:</em> {{ i }} <br />

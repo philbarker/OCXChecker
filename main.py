@@ -7,9 +7,8 @@ app = Flask(__name__)
 @app.route("/")
 def checker():
     checker = Checker(request.args)
-    #    return checker.make_report_0()
-    results = checker.do_checks()
-    report = checker.make_report(results)
+    result = checker.do_checks()
+    report = checker.make_report(result)
     return report
 
 

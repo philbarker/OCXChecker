@@ -1,13 +1,12 @@
 from flask import render_template
 
 
-def make_report(self, results):
-    # refactor this into reports.py to set report of Reports
+def make_report(self, result):
     report = Reports(self.verbose)
     report.header(
         self.page_data.request_url, self.page_data.base_url, self.page_data.status_code
     )
-    report.sections(results)
+    report.sections(result)
     report.turtle(self.ocx_graph)
     report.end_report
     return report.report
@@ -29,12 +28,11 @@ class Reports:
     def end_report(self):
         self.report = self.report + render_template("foot.html")
 
-    def sections(self, results):
+    def sections(self, result):
         v = self.verbose
-        for key in results:
-            t = key + ".html"
-            data = results[key]
-            self.report = self.report + render_template(t, results=data, verbose=v)
+        for r in result["results"]:
+            t = r["name"].replace(" ", "_") + ".html"
+            self.report = self.report + render_template(t, results=r, verbose=v)
 
     def turtle(self, graph):
         t = "turtle.html"

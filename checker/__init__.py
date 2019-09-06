@@ -54,7 +54,9 @@ class Checker:
     def make_report(self, result):
         report = Report(self.verbose)
         report.header(
-            self.page_data.request_url, self.page_data.base_url, self.page_data.status_code
+            self.page_data.request_url,
+            self.page_data.base_url,
+            self.page_data.status_code,
         )
         report.sections(result)
         report.turtle(self.ocx_graph)

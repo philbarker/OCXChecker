@@ -4,3 +4,4 @@ requests
 extruct>=0.7.3
 rdflib>=4.2
 rdflib-jsonld
+Jinja2>=2.10

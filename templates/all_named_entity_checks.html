@@ -1,0 +1,31 @@
+<section id="enitity-check">
+  <h2>Report on {{results.name | e}}</h2> {# all named entity checks #}
+  <p>Check that {{results.description | e}}.</p>
+  {% for result in results['results'] %}
+    <h3>Report on {{result.name | e}}</h3> {# check entity #}
+    {% if result['passes'] %}
+      <em class="pass">PASS:</em> {{result['description'] | e}}
+    {% else %}
+      <em class="fail">FAIL:</em> {{result['name'] | e}}
+    {% endif %} <br />
+    {% for i in result['info'] %}
+      <em class="info">INFO:</em> {{ i }} <br />
+    {% endfor %}
+    {% for w in result['warnings'] %}
+      <em class="warning">WARNING:</em> {{ w }} <br />
+    {% endfor %}
+    {% for result in result['results'] %}
+      {% if result['passes'] %}
+        <em class="pass">PASS:</em> {{result['description'] | e}}
+      {% else %}
+        <em class="fail">FAIL:</em> {{result['name'] | e}}
+      {% endif %} <br />
+      {% for i in result['info'] %}
+        <em class="info">INFO:</em> {{ i }} <br />
+      {% endfor %}
+      {% for w in result['warnings'] %}
+        <em class="warning">WARNING:</em> {{ w }} <br />
+      {% endfor %}
+    {% endfor %}
+  {% endfor %}
+</section>

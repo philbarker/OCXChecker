@@ -1,0 +1,17 @@
+<html>
+<head><title>A test</title></head>
+<body> <-- Test for case extracting multiple json-ld objects from bad html-->
+  <h1>One thing after another
+  <script type="application/ld+json">
+  {
+    "@context": "http://schema.org/",
+    "@type": "Thing",
+    "name": "Something"
+  }  </script>
+  <p>Will it never end?
+  <script type="application/ld+json">
+  {
+    "@context": "http://schema.org/",
+    "@type": "Thing",
+    "name": "Another thing"
+  }  </script>

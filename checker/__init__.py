@@ -36,7 +36,7 @@ class Checker:
     def __init__(self, query_parameters, *args, **kwargs):
         self.set_output_params(query_parameters)
         self.page_data = PageData(query_parameters.get("url"))
-        self.ocx_graph = OCXGraph(self.page_data)
+        self.ocx_graph = OCXGraph(self.page_data.data, self.page_data.base_url)
         self.schema_graph = SchemaGraph()
 
     def do_checks(self):

@@ -9,7 +9,9 @@ ocx_schema_format = "turtle"
 
 
 class SchemaGraph(Graph):
+    """read in the RDFschema from hard coded file locations and build graph"""
     def __init__(self):
+        """read in the RDFschema from hard coded file locations and build graph"""
         super().__init__()
         try:
             self.parse(location=sdo_schema_location, format=sdo_schema_format)

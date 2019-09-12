@@ -9,6 +9,7 @@ OCX = Namespace("https://github.com/K12OCX/k12ocx-specs/")
 
 class OCXGraph(Graph):
     """Create a rdflib.Graph from a JSON-LD string."""
+
     def __init__(self, data: str, url: str):
         """Create a rdflib.Graph from a JSON-LD string."""
         super().__init__()

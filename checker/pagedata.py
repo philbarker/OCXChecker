@@ -4,17 +4,19 @@ from w3lib.html import get_base_url
 from extruct.jsonld import JsonLdExtractor
 from json import dumps
 
+
 def is_http_url(url):
     # utility function to check urls
     # from https://stackoverflow.com/questions/7160737
-  try:
-    result = urlparse(url)
-    if result.scheme in ['http', 'https']:
-        return all([result.scheme, result.netloc])
-    else:
-        raise ValueError
-  except ValueError:
-    return False
+    try:
+        result = urlparse(url)
+        if result.scheme in ["http", "https"]:
+            return all([result.scheme, result.netloc])
+        else:
+            raise ValueError
+    except ValueError:
+        return False
+
 
 class PageData:
     """Fetch a webpage referenced by a url and store any JSON-LD found in
@@ -34,9 +36,9 @@ class PageData:
     .  data: JSON extracted from the page as a string (if any, '[]' if none)
     """
 
-    def __init__(self, url: str =''):
+    def __init__(self, url: str = ""):
         """"If passed a valid url retrieve page from it, extract and store and JSON-LD as self.data along with information about where data came from. If no url, instance has data (used for unit testing)."""
-        if url is not '':
+        if url is not "":
             self.set_request_url(url)
             self.retrieve_page()
             self.set_data()
@@ -73,7 +75,7 @@ class PageData:
         jslde = JsonLdExtractor()
         try:
             self.data = dumps(jslde.extract(self.page, base_url=self.base_url))
-            if self.data == '[]':
+            if self.data == "[]":
                 return False
             else:
                 return True

@@ -1,0 +1,26 @@
+@prefix sdo: <http://schema.org/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix oer: <http://oerschema.org/> .
+@prefix ocx: <https://github.com/K12OCX/k12ocx-specs/> .
+
+
+ocx:ReferencedMaterial a rdfs:Class ;
+    owl:equivalentClass oer:ReferencedMaterial ;
+    rdfs:label "ReferencedMaterial" ;
+    rdfs:comment "Material associated with an instructional component that is referenced by that component. Examples include primary sources analysed in activities or assessments, material studied in Courses, raw material used in activities or assessments" ;
+    rdfs:subClassOf oer:AssociatedMaterial .
+
+ocx:SupplementalMaterial a rdfs:Class ;
+    owl:equivalentClass oer:SupplementalMaterial ;
+    rdfs:label "SupplementalMaterial" ;
+    rdfs:comment "Material associated with an instructional component that provides additional information about that component. Examples include Curriculum guides, Family course guides Student study guides." ;
+    rdfs:subClassOf oer:AssociatedMaterial .
+    
+oer:AssociatedMaterial a rdfs:Class ;
+    rdfs:label "AssociatedMaterial" ;
+    rdfs:comment "Material that is associated with the course." ;
+    rdfs:subClassOf oer:LearningComponent, 
+                    sdo:CreativeWork .

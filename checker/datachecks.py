@@ -42,15 +42,10 @@ class CheckResult(dict):
         self["passes"] = p
 
 
-class DataChecks:
-    from .checkutils import (
-        deduplicate,
-        schema_label_string,
-        type_string,
-        get_parent_classes,
-        get_types,
-    )
+from .checkutils import deduplicate, schema_label_string, labels_string, get_types
 
+
+class DataChecks:
     def __init__(self, graph, schema_graph):
         self.graph = graph
         self.schema_graph = schema_graph
@@ -64,7 +59,7 @@ class DataChecks:
         entities = []
         for aType in primary_types:
             entities.extend(self.graph.subjects(RDF.type, aType))
-        result.add_info(self.deduplicate(entities))
+        result.add_info(deduplicate(entities))
         if len(result["info"]) < 1:
             result.set_passes(False)
             result.add_info("no primary entities were found")
@@ -78,11 +73,11 @@ class DataChecks:
         p_domain_labels = ""
         for p_domain in self.schema_graph.objects(p, SDO.domainIncludes):
             valid_subject_types.append(p_domain)
-            p_domain_label = self.schema_label_string(p_domain, "", ", ")
+            p_domain_label = schema_label_string(self.schema_graph, p_domain, "", ", ")
             p_domain_labels = p_domain_labels + p_domain_label
         p_domain_labels = p_domain_labels[:-2]
-        type_name, types = self.get_types(s)
-        types_string = self.type_string(types)
+        type_name, types = get_types(self.graph, self.schema_graph, s)
+        types_string = labels_string(self.schema_graph, types)
         s_name = ""
         for name in self.graph.objects(s, SDO.name):
             s_name = s_name + " " + name
@@ -126,16 +121,18 @@ class DataChecks:
         p_range_labels = ""
         for p_range in self.schema_graph.objects(p, SDO.rangeIncludes):
             valid_object_types.append(p_range)
-            p_range_label = self.schema_label_string(p_range, "", ", ")
+            p_range_label = schema_label_string(self.schema_graph, p_range, "", ", ")
             p_range_labels = p_range_labels + p_range_label
         p_range_labels = p_range_labels[:-2]
-        type_name, types = self.get_types(o)
+        type_name, types = get_types(self.graph, self.schema_graph, o)
         range_valid = False
         for t in types:
             if t in valid_object_types:
                 range_valid = True
         result.add_info("property has expected range " + p_range_labels)
-        result.add_info("points to object of type " + self.type_string(types))
+        result.add_info(
+            "points to object of type " + labels_string(self.schema_graph, types)
+        )
         if range_valid:
             result.set_passes(True)
         elif type(o) is Literal:
@@ -215,7 +212,7 @@ class DataChecks:
         for e in self.graph.subjects(RDF.type, None):
             if type(e) != BNode:
                 named_entities.append(e)
-        named_entities = self.deduplicate(named_entities)
+        named_entities = deduplicate(named_entities)
         for e in named_entities:
             uri = str(e)
             result.add_result(self.check_named_entity(e))

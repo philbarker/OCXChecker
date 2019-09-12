@@ -6,11 +6,12 @@ SDO = Namespace("http://schema.org/")
 OER = Namespace("http://oerschema.org/")
 OCX = Namespace("https://github.com/K12OCX/k12ocx-specs/")
 
+
 def test_init():
     g = SchemaGraph()
     assert type(g) == SchemaGraph
-    assert isinstance(g, Graph) # we got a graph!
-    expected_labels = [(RDFS.label, Literal('CreativeWork'))]
+    assert isinstance(g, Graph)  # we got a graph!
+    expected_labels = [(RDFS.label, Literal("CreativeWork"))]
     # graph has schema.org info in it
     assert g.preferredLabel(SDO.CreativeWork) == expected_labels
     classes = []

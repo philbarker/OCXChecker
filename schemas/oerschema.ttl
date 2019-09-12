@@ -692,4 +692,7 @@ oer:uri a oer:Property,
     sdo:domainIncludes oer:URL ;
     sdo:rangeIncludes oer:URL ;
     rdfs:comment "URL of the item." .
+    
+<http://creativecommons.org/ns#Work> a rdfs:Class ;
+    rdfs:label "CC:Work" .
 

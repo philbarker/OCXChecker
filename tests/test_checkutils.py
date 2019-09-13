@@ -1,8 +1,8 @@
 from checker.checkutils import *
 from rdflib import Graph, URIRef, BNode, Literal
 
-sg = Graph()  # use OCX RDFS as schema graph b/c it is small
-sg.parse(location="tests/input/ocx.ttl", format="turtle")
+sg = Graph()  # use as schema graph b/c it is small
+sg.parse(location="tests/input/schema.ttl", format="turtle")
 dg = Graph()  # a data graph for tests
 dg.parse(location="tests/input/data.ttl", format="turtle")
 

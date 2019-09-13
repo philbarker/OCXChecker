@@ -6,6 +6,25 @@ SDO = Namespace("http://schema.org/")
 
 
 class CheckResult(dict):
+    """A dict object for checker test results, and the results of sub-tests
+
+       CheckResult dict has keys for:
+        - 'name' name of test
+        - 'description' description of test
+        - 'passes' boolen for whether test was passed
+        - 'info' list of 'information only' level notifications
+        - 'warnings' list of 'warning' level notifications
+        - 'results' list of CheckResult objects for results of any test run
+           as part of the main check.
+       name, description and passes can be set on init
+       has methods
+       - add_info
+       - add_warnings
+       - add_results
+       to add single values or list of values.
+       - set_passes sets the passes value
+    """
+
     def __init__(self, n, d, p=False):
         self["name"] = n
         self["description"] = d
@@ -46,11 +65,33 @@ from .checkutils import deduplicate, schema_label_string, labels_string, get_typ
 
 
 class DataChecks:
+    """Class comprising a data graph and a schema graph with various methods to test the data graph.
+
+       Has properties:
+       .graph the data graph, must be set on init
+       .schema_graph the schema graph, must be set on init
+
+       Has methods:
+       .find_primary_entities() returns CheckResult['info'] listing entities of defined types as its results.
+       .subject_predicate_check()
+       .predicate_object_check()
+       .check_predicate()
+       .check_all_predicates()
+       .check_named_entity()
+       .check_all_named_entities()
+       .check_entity_type()
+       .check_entity_name()
+       .check_entity_description()
+     """
+
     def __init__(self, graph, schema_graph):
         self.graph = graph
         self.schema_graph = schema_graph
 
     def find_primary_entities(self, primary_types):
+        """Return CheckResult['info'] listing entities of defined types as results.
+
+        Accepts a list of RDFS.types and lists all entities with these types in the CheckResult., sets passes Ture if it finds entities, False if not."""
         result = CheckResult(
             n="primary entities present",
             d="check that there is at least one primary entity",
@@ -62,36 +103,59 @@ class DataChecks:
         result.add_info(deduplicate(entities))
         if len(result["info"]) < 1:
             result.set_passes(False)
-            result.add_info("no primary entities were found")
         else:
             result.set_passes(True)
         return result
 
     def subject_predicate_check(self, s, p):
-        result = CheckResult("subject check", "subject is in predicate's domain", True)
+        """Check that the subject is in the Range of the predicate. Subject type and predicate must be in the schema graph"""
+        # todo: rewrite this mess of a method
+        result = CheckResult("subject check", "subject is in predicate's domain", False)
+        if type(p) is not URIRef:
+            result.set_passes(False)
+            result.add_info("predicate must be a URI")
+        if type(s) not in [URIRef, BNode]:
+            result.set_passes(False)
+            result.add_info("subject must be a URI or BNode")
         valid_subject_types = []
         p_domain_labels = ""
+        valid_p = False  # predicate is valid only if it is in the schema graph
         for p_domain in self.schema_graph.objects(p, SDO.domainIncludes):
+            valid_p = True
             valid_subject_types.append(p_domain)
             p_domain_label = schema_label_string(self.schema_graph, p_domain, "", ", ")
             p_domain_labels = p_domain_labels + p_domain_label
-        p_domain_labels = p_domain_labels[:-2]
+        if valid_p:
+            p_domain_labels = p_domain_labels[:-2]
+        else:
+            result.add_warning("not checked: predicate not in schema graph")
         type_name, types = get_types(self.graph, self.schema_graph, s)
         types_string = labels_string(self.schema_graph, types)
         s_name = ""
         for name in self.graph.objects(s, SDO.name):
             s_name = s_name + " " + name
         if s_name == "":
-            s_name = "with no name"
-        result.add_info("used on object named " + s_name)
-        result.add_info("object is of type " + types_string)
+            s_name = "[no name]"
+        result.add_info("used on subject named " + s_name)
+        result.add_info("subject is of type " + types_string)
         result.add_info("property has expected domain " + p_domain_labels)
-        domain_valid = False
+        if types == []:
+            subject_type_known = False
+        elif types == [SDO.URL]:  # URL could be anything
+            subject_type_known = False
+        else:
+            subject_type_known = True
+        subject_in_domain = False
         for t in types:
             if t in valid_subject_types:
-                domain_valid = True
-        if domain_valid:
-            result.set_passes(True)
+                subject_in_domain = True
+        if subject_type_known:
+            if subject_in_domain:
+                result.set_passes(True)
+            else:
+                result.set_passes(False)
+                info = "subject is of type that is not in predicate's domain"
+                result.add_info(info)
         elif type(s) is BNode:
             result.set_passes(False)
             info = (
@@ -102,15 +166,17 @@ class DataChecks:
             result.add_info(info)
         elif type(s) is URIRef:
             result.set_passes(True)
-            info = (
-                "a URI reference for an object of unknown type has been used (it may not be on this page) where "
+            warning = (
+                "a URI reference for an subject of unknown type has been used (it may not be on this page) where "
                 + p_domain_labels
-                + " was expected. You should check the object at the end of the URI is of the right type. You could add its type here to stop seeing this warning "
+                + " was expected. You should check the subject at the end of the URI is of the right type. You could add its type to stop seeing this warning "
             )
-            result.add_info(info)
+            result.add_warning(warning)
         else:
             result.set_passes(False)
-            result.add_info("subject type is not in expected domain of property")
+            result.add_info(
+                "subject type is not known and subject is not a URIRef or a blank node. This is odd"
+            )
         return result
 
     def predicate_object_check(self, p, o):

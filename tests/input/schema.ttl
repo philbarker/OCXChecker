@@ -1,0 +1,98 @@
+@prefix sdo: <http://schema.org/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix oer: <http://oerschema.org/> .
+@prefix ocx: <https://github.com/K12OCX/k12ocx-specs/> .
+
+oer:Lesson a rdfs:Class ;
+    rdfs:label "Lesson" ;
+    rdfs:comment "" ;
+    rdfs:subClassOf sdo:CreativeWork .
+
+sdo:Course  a rdfs:Class ;
+    rdfs:label "Course" ;
+    rdfs:subClassOf sdo:CreativeWork .
+
+sdo:CreativeWork a rdfs:Class ;
+    rdfs:label "CreativeWork" ;
+    rdfs:subClassOf sdo:Thing .
+
+sdo:Thing a rdfs:Class ;
+    rdfs:label "Thing" .
+
+sdo:EducationalAudience a rdfs:Class ;
+    rdfs:label "EducationalAudience" ;
+    rdfs:subClassOf sdo:Audience .
+
+sdo:about a rdf:Property ;
+    rdfs:label "about" ;
+    sdo:domainIncludes sdo:CreativeWork;
+    sdo:rangeIncludes sdo:Thing .
+
+sdo:audience a rdf:Property ;
+    rdfs:label "audience" ;
+    sdo:domainIncludes sdo:CreativeWork,
+        sdo:Event ;
+    sdo:rangeIncludes sdo:Audience .
+
+sdo:creator a rdf:Property ;
+    rdfs:label "creator" ;
+    sdo:domainIncludes sdo:CreativeWork,
+        sdo:UserComments ;
+    sdo:rangeIncludes sdo:Organization,
+        sdo:Person  .
+
+sdo:description a rdf:Property ;
+    rdfs:label "description" ;
+    sdo:domainIncludes sdo:Thing ;
+    sdo:rangeIncludes sdo:Text ;
+    rdfs:comment "A description of the item." .
+
+sdo:educationalRole a rdf:Property ;
+    rdfs:label "educationalRole" ;
+    sdo:domainIncludes sdo:EducationalAudience ;
+    sdo:rangeIncludes sdo:Text  .
+
+sdo:hasPart a rdf:Property ;
+    rdfs:label "hasPart" ;
+    sdo:domainIncludes sdo:CreativeWork ;
+    sdo:rangeIncludes sdo:CreativeWork .
+
+sdo:learningResourceType a rdf:Property ;
+    rdfs:label "learningResourceType" ;
+    sdo:domainIncludes sdo:CreativeWork ;
+    sdo:rangeIncludes sdo:Text .
+
+sdo:name a rdf:Property ;
+    rdfs:label "name" ;
+    sdo:domainIncludes sdo:Thing ;
+    sdo:rangeIncludes sdo:Text ;
+    rdfs:comment "The name of the item." ;
+    rdfs:subPropertyOf <rdfs:label>  .
+
+sdo:foundingDate a rdf:Property ;
+    rdfs:label "foundingDate" ;
+    sdo:domainIncludes sdo:Organization ;
+    sdo:rangeIncludes sdo:Date .
+
+sdo:Organization a rdfs:Class ;
+    rdfs:label "Organization" ;
+    rdfs:comment "An organization such as a school, NGO, corporation, club, etc." ;
+    rdfs:subClassOf sdo:Thing .
+
+ocx:ReferencedMaterial a rdfs:Class ;
+    owl:equivalentClass oer:ReferencedMaterial ;
+    rdfs:label "ReferencedMaterial" ;
+    rdfs:subClassOf oer:AssociatedMaterial .
+
+ocx:SupplementalMaterial a rdfs:Class ;
+    owl:equivalentClass oer:SupplementalMaterial ;
+    rdfs:label "SupplementalMaterial" ;
+    rdfs:subClassOf oer:AssociatedMaterial .
+
+oer:AssociatedMaterial a rdfs:Class ;
+    rdfs:label "AssociatedMaterial" ;
+    rdfs:subClassOf oer:LearningComponent,
+                    sdo:CreativeWork .

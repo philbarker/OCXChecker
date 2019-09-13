@@ -10,62 +10,20 @@
 
 <http://example.org/#NoType> sdo:name 'atypical' .
 
-<https://philbarker.github.io/OCXPhysVibWav/l1/#Lesson> a oer:Lesson,
+<http://example.org/#Lesson> a oer:Lesson,
         sdo:Course ;
     sdo:about "Hooke's Law",
         "periodic motion",
         "simple harmonic oscillators" ;
     sdo:creator "Yen-Jie Lee" ;
     sdo:description "In this lecture, Prof. Lee discusses the mathematical description of the periodic oscillation and simple harmonic oscillators. The first 5 minutes are devoted to course information." ;
-    sdo:hasPart <https://philbarker.github.io/OCXPhysVibWav/l1/#AirCart>,
-        <https://philbarker.github.io/OCXPhysVibWav/l1/#LectureNotes>,
-        <https://philbarker.github.io/OCXPhysVibWav/l1/#LectureVideo>;
-    sdo:name "Lecture 1: Periodic Oscillations, Harmonic Oscillators" ;
-    sdo:provider "MIT" .
+    sdo:hasPart <http://example.org/#LectureVideo>;
+    sdo:name "Lecture 1: Periodic Oscillations, Harmonic Oscillators" .
 
-<https://philbarker.github.io/OCXPhysVibWav/l1/#AirCart> a sdo:CreativeWork ;
-    sdo:educationalUse "Lecture demonstration" ;
-    sdo:learningResourceType "activityPlan" ;
-    sdo:mainEntityOfPage <http://tsgphysics.mit.edu/front/?page=demo.php&letnum=C%201&show=0> ;
-    sdo:name "Air Cart Between Springs",
-        "Air cart between springs" .
-
-<https://philbarker.github.io/OCXPhysVibWav/l1/#LectureNotes> a oer:SupportingMaterial,
+<http://example.org/#LectureVideo> a oer:SupportingMaterial,
         sdo:CreativeWork ;
     sdo:audience [ a sdo:EducationalAudience ;
             sdo:educationalRole "learner" ] ;
-    sdo:encoding [ a sdo:MediaObject ;
-            sdo:contentUrl <https://ocw.mit.edu/courses/physics/8-03sc-physics-iii-vibrations-and-waves-fall-2016/part-i-mechanical-vibrations-and-waves/lecture-1/MIT8_03SCF16_Lec1.pdf> ;
-            sdo:encodingFormat "application/pdf" ;
-            sdo:name "Typed Notes for Lecture 1 (PDF)" ],
-        [ a sdo:MediaObject ;
-            sdo:accessibilitySummary "This resource may not render correctly in a screen reader" ;
-            sdo:contentUrl <https://ocw.mit.edu/courses/physics/8-03sc-physics-iii-vibrations-and-waves-fall-2016/part-i-mechanical-vibrations-and-waves/lecture-1/MIT8_03SCF16_hw_Lec1.pdf> ;
-            sdo:encodingFormat "application/pdf" ;
-            sdo:name "Handwritten Notes for Lecture 1 (PDF - 2.2MB)" ] ;
-    sdo:learningResourceType "LectureNotes" ;
-    sdo:name "Lecture Notes: Periodic Oscillations, Harmonic Oscillators",
-        "Lecture notes" .
-
-<https://philbarker.github.io/OCXPhysVibWav/l1/#LectureVideo> a oer:SupportingMaterial,
-        sdo:CreativeWork ;
-    sdo:audience [ a sdo:EducationalAudience ;
-            sdo:educationalRole "learner" ] ;
-    sdo:encoding [ a sdo:VideoObject ;
-            sdo:name "Lecture video on YouTube" ;
-            sdo:url <https://www.youtube.com/v/4ysFC9vd3GE> ],
-        [ a sdo:VideoObject ;
-            sdo:contentUrl <http://archive.org/download/MIT8.03SCF16/MIT8_03SCF16_lec01_300k.mp4> ;
-            sdo:encodingFormat "video/mp4" ;
-            sdo:name "Lecture video download from Internet Archive" ],
-        [ a sdo:MediaObject ;
-            sdo:contentUrl <https://ocw.mit.edu/courses/physics/8-03sc-physics-iii-vibrations-and-waves-fall-2016/part-i-mechanical-vibrations-and-waves/lecture-1/lecture-1-video/4ysFC9vd3GE.pdf> ;
-            sdo:encodingFormat "application/pdf" ;
-            sdo:name "English-US transcript of lecture video" ],
-        [ a sdo:MediaObject ;
-            sdo:contentUrl <https://ocw.mit.edu/courses/physics/8-03sc-physics-iii-vibrations-and-waves-fall-2016/part-i-mechanical-vibrations-and-waves/lecture-1/lecture-1-video/4ysFC9vd3GE.srt> ;
-            sdo:encodingFormat "text/srt" ;
-            sdo:name "English-US captions of lecture video" ] ;
     sdo:learningResourceType "LectureRecording" ;
     sdo:name "Lecture Video: Periodic Oscillations, Harmonic Oscillators",
         "Lecture video" .

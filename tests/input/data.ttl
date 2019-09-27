@@ -8,6 +8,16 @@
 
 <http://example.org/#Ref> a ocx:ReferencedMaterial .
 
+<http://example.org/#Ref2> a ocx:ReferencedMaterial ;
+    sdo:name "reference material" , "with 2 names" ;
+    sdo:description "reference material" , "with 2 descriptions" .
+
+<http://example.org/#Ref3> a ocx:ReferencedMaterial ;
+      sdo:name <http://example.org/#Ref> ;
+      sdo:description <http://example.org/#Ref> .
+
+<http://example.org/#Ref4> a sdo:ReferencedMaterial .
+
 <http://example.org/#NoType> sdo:name 'atypical' .
 
 <http://example.org/#Lesson> a oer:Lesson,
@@ -27,3 +37,7 @@
     sdo:learningResourceType "LectureRecording" ;
     sdo:name "Lecture Video: Periodic Oscillations, Harmonic Oscillators",
         "Lecture video" .
+
+<http://example.org/#Douglas> a sdo:Organization ;
+    sdo:name "Douglas" ;
+    sdo:description "in the jungle" .

@@ -77,8 +77,8 @@ class DataChecks:
        .predicate_object_check()
        .check_predicate()
        .check_all_predicates()
-       .check_named_entity()
-       .check_all_named_entities()
+       .check_entity_ndt()
+       .check_all_ided_entities()
        .check_entity_type()
        .check_entity_name()
        .check_entity_description()
@@ -109,7 +109,7 @@ class DataChecks:
 
     def subject_predicate_check(self, s, p):
         """Check that the subject is in the Range of the predicate. Subject type and predicate must be in the schema graph"""
-        # todo: rewrite this mess of a method
+        # FIXME: rewrite this mess of a method
         result = CheckResult("subject check", "subject is in predicate's domain", False)
         if type(p) is not URIRef:
             result.set_passes(False)
@@ -180,9 +180,18 @@ class DataChecks:
         return result
 
     def predicate_object_check(self, p, o):
+        """Check that the object is in the range of the predicate. Object type and predicate must be in the schema graph"""
+        # FIXME: rewrite this mess of a method
         result = CheckResult(
             "object range check", "object is in predicate's range", True
         )
+        if type(p) is not URIRef:
+            result.set_passes(False)
+            result.add_info("predicate must be a URI")
+        if type(o) not in [URIRef, BNode, Literal]:
+            result.set_passes(False)
+            result.add_info("object must be a URI, BNode or Literal")
+            result.add_info("object is of type " + type(o).__name__)
         valid_object_types = []
         p_range_labels = ""
         for p_range in self.schema_graph.objects(p, SDO.rangeIncludes):
@@ -191,14 +200,23 @@ class DataChecks:
             p_range_labels = p_range_labels + p_range_label
         p_range_labels = p_range_labels[:-2]
         type_name, types = get_types(self.graph, self.schema_graph, o)
+        if types == []:
+            object_type_known = False
+        elif types == [SDO.URL]:  # URL could be anything
+            object_type_known = False
+        else:
+            object_type_known = True
         range_valid = False
         for t in types:
             if t in valid_object_types:
                 range_valid = True
         result.add_info("property has expected range " + p_range_labels)
-        result.add_info(
-            "points to object of type " + labels_string(self.schema_graph, types)
-        )
+        if object_type_known:
+            result.add_info(
+                "points to object of type " + labels_string(self.schema_graph, types)
+            )
+        else:
+            result.add_warning("object type not known")
         if range_valid:
             result.set_passes(True)
         elif type(o) is Literal:
@@ -206,23 +224,23 @@ class DataChecks:
             warning = (
                 "text has been used where "
                 + p_range_labels
-                + " was expected. This is not best practice "
+                + " was expected. This is not best practice"
             )
             result.add_warning(warning)
-        elif type(o) is BNode:
-            result.set_passes(False)
+        elif type(o) is BNode and not object_type_known:
+            result.set_passes(True)
             warning = (
                 "an untyped BNode object has been used where "
                 + p_range_labels
                 + " was expected. Please add object type "
             )
             result.add_warning(warning)
-        elif type(o) is URIRef:
+        elif type(o) is URIRef and not object_type_known:
             result.set_passes(True)
             warning = (
                 "a URI reference for an object of unknown type has been used (it may not be on this page) where "
                 + p_range_labels
-                + " was expected. You should check the object at the end of the URI is of the right type. You could add its type here to stop seeing this warning "
+                + " was expected. You should check the object at the end of the URI is of the right type. You could add its type to stop seeing this warning "
             )
             result.add_warning(warning)
         else:
@@ -230,7 +248,10 @@ class DataChecks:
         return result
 
     def check_predicate(self, s, p, o):
-        # checks predicate from single statement
+        """Check predicate in a triple is being used with correct types.
+
+        Given a triple (s,p,o), check that s is of type in the domain of p and o is of type in the range of p.
+        """
         result = CheckResult(
             "predicate check for " + p,
             "subject and object are in expected domain and range",
@@ -239,9 +260,18 @@ class DataChecks:
         result.add_info("predicate in statement " + " ".join([s, p, o]))
         result["results"].append(self.subject_predicate_check(s, p))
         result["results"].append(self.predicate_object_check(p, o))
+        # FIXME: following should be aggregate_errors() utility function
+        warn = False
+        for r in result["results"]:
+            result.set_passes(result["passes"] and r["passes"])
+            if r["warnings"] != []:
+                warn = True
+        if warn:
+            result.add_warning("warnings were generated")
         return result
 
     def check_all_predicates(self):
+        """Check that all predicates in graph are being used with subjects and objects of correct types."""
         result = CheckResult(
             n="predicate checks",
             d="subjects are in predicates' domains, and objects are in predicates' ranges for all statements",
@@ -250,27 +280,46 @@ class DataChecks:
         for s, p, o in self.graph.triples((None, None, None)):
             if p in self.schema_graph.subjects(RDF.type, RDF.Property):
                 result["results"].append(self.check_predicate(s, p, o))
+        # FIXME: following should be aggregate_errors() utility function
+        warn = False
+        for r in result["results"]:
+            result.set_passes(result["passes"] and r["passes"])
+            if r["warnings"] != []:
+                warn = True
+        if warn:
+            result.add_warning("warnings were generated")
         return result
 
-    def check_named_entity(self, e):
+    def check_entity_ndt(self, e):
+        """Check that entity has a name, description and type."""
         uri = str(e)
         result = CheckResult(
             n="check entity " + uri,
             d="entity " + uri + " has name, description and type",
             p=True,
         )
+        if type(e) not in [URIRef, BNode]:
+            result.set_passes(False)
+            result.add_info("entity variable not URIRef or BNode")
+            return result
         result.add_result(self.check_entity_name(e))
         result.add_result(self.check_entity_description(e))
         result.add_result(self.check_entity_type(e))
+        # FIXME: following should be aggregate_errors() utility function
+        warn = False
         for r in result["results"]:
-            # set passes to true if all sub-result passes are true
             result.set_passes(result["passes"] and r["passes"])
+            if r["warnings"] != []:
+                warn = True
+        if warn:
+            result.add_warning("warnings were generated")
         return result
 
-    def check_all_named_entities(self):
+    def check_all_ided_entities(self):
+        """Check that every entity with an @id has a name, description and type."""
         named_entities = []
         result = CheckResult(
-            n="all named entity checks",
+            n="check of all indentified entities",
             d="entities with URI have name, description and type",
             p=True,
         )
@@ -281,14 +330,27 @@ class DataChecks:
         named_entities = deduplicate(named_entities)
         for e in named_entities:
             uri = str(e)
-            result.add_result(self.check_named_entity(e))
+            result.add_result(self.check_entity_ndt(e))
+        # FIXME: following should be aggregate_errors() utility function
+        warn = False
+        for r in result["results"]:
+            result.set_passes(result["passes"] and r["passes"])
+            if r["warnings"] != []:
+                warn = True
+        if warn:
+            result.add_warning("warnings were generated")
         return result
 
     def check_entity_type(self, e):
-        uri = str(e)
+        """Check that entity has known RDF type(s)."""
         result = CheckResult(
             n="check entity type", d="entity has known RDF:type", p=False
         )
+        if type(e) not in [URIRef, BNode]:
+            result.set_passes(False)
+            result.add_info("entity variable not URIRef or BNode")
+            return result
+        uri = str(e)
         for t in self.graph.objects(e, RDF.type):
             result.set_passes(True)
             result.add_info("RDF type is " + t)
@@ -309,11 +371,17 @@ class DataChecks:
         return result
 
     def check_entity_description(self, e):
-        c = 0
-        literal = True
+        """Check entity has exactly one sdo.description and that it is Literal"""
+        # FIXME (low priority) what about descriptions from other schemas?
         result = CheckResult(
             n="check entity description", d="description is string or absent", p=True
         )
+        if type(e) not in [URIRef, BNode]:
+            result.set_passes(False)
+            result.add_info("entity variable not URIRef or BNode")
+            return result
+        c = 0
+        literal = True
         for description in self.graph.objects(e, SDO.description):
             c += 1
             if type(description).__name__ == "Literal":
@@ -327,20 +395,26 @@ class DataChecks:
             msg = "Having more than one description may be ambiguous."
             result.add_warning(msg)
         elif c < 1:
-            msg = "No sdo.description. Descriptions are useful."
+            msg = "No sdo.description found. Descriptions are useful."
             result.add_warning(msg)
         if not literal:
             result.set_passes(False)
         return result
 
     def check_entity_name(self, e):
-        c = 0
-        literal = True
+        """Check that an entity has exactly one sdo.name and that it is Literal."""
+        # FIXME (low priority) what about other labels?
         result = CheckResult(
             n="Check entity name",
             d="entity has at least one name property, name is a string",
             p=False,
         )
+        if type(e) not in [URIRef, BNode]:
+            result.set_passes(False)
+            result.add_info("entity variable not URIRef or BNode")
+            return result
+        c = 0
+        literal = True
         for name in self.graph.objects(e, SDO.name):
             c += 1
             if type(name).__name__ == "Literal":
@@ -355,7 +429,7 @@ class DataChecks:
         elif c < 1:
             msg = "No sdo.name found. Names are useful."
             result.set_passes(False)
-            result.add_warning(msg)
+            result.add_info(msg)
         if not literal:
             passes = False
             result.set_passes(False)

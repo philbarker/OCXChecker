@@ -47,7 +47,7 @@ class Checker:
             p=True,
         )
         result.add_result(checks.find_primary_entities(primary_ocx_types))
-        result.add_result(checks.check_all_named_entities())
+        result.add_result(checks.check_all_ided_entities())
         result.add_result(checks.check_all_predicates())
         return result
 

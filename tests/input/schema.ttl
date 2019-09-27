@@ -28,20 +28,20 @@ sdo:EducationalAudience a rdfs:Class ;
 
 sdo:about a rdf:Property ;
     rdfs:label "about" ;
-    sdo:domainIncludes sdo:CreativeWork;
+    sdo:domainIncludes sdo:CreativeWork ;
     sdo:rangeIncludes sdo:Thing .
 
 sdo:audience a rdf:Property ;
     rdfs:label "audience" ;
-    sdo:domainIncludes sdo:CreativeWork,
+    sdo:domainIncludes sdo:CreativeWork ,
         sdo:Event ;
     sdo:rangeIncludes sdo:Audience .
 
 sdo:creator a rdf:Property ;
     rdfs:label "creator" ;
-    sdo:domainIncludes sdo:CreativeWork,
+    sdo:domainIncludes sdo:CreativeWork ,
         sdo:UserComments ;
-    sdo:rangeIncludes sdo:Organization,
+    sdo:rangeIncludes sdo:Organization ,
         sdo:Person  .
 
 sdo:description a rdf:Property ;
@@ -82,6 +82,11 @@ sdo:Organization a rdfs:Class ;
     rdfs:comment "An organization such as a school, NGO, corporation, club, etc." ;
     rdfs:subClassOf sdo:Thing .
 
+sdo:Text a sdo:DataType,
+        rdfs:Class ;
+    rdfs:label "Text" ;
+    rdfs:comment "Data type: Text." .
+
 ocx:ReferencedMaterial a rdfs:Class ;
     owl:equivalentClass oer:ReferencedMaterial ;
     rdfs:label "ReferencedMaterial" ;
@@ -94,5 +99,5 @@ ocx:SupplementalMaterial a rdfs:Class ;
 
 oer:AssociatedMaterial a rdfs:Class ;
     rdfs:label "AssociatedMaterial" ;
-    rdfs:subClassOf oer:LearningComponent,
+    rdfs:subClassOf oer:LearningComponent ,
                     sdo:CreativeWork .

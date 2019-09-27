@@ -1,32 +1,85 @@
 <html>
 <head><title>A test</title></head>
-<body> <-- A test & demo for checking oerschema and  schema.org-->
+<body>
+  <!-- A test & demo for checking oerschema and  schema.org-->
   <script type="application/ld+json">
-    {
-      "@context": [
-        {"sdo": "http://schema.org/"},
-        {"oer": "http://oerschema.org/"},
-        {"@base": "http://example.org/id/"},
-        {"ex": "http://example.org/"}
-      ],
-        "@type": ["oer:Lesson", "sdo:CreativeWork"],
-        "@id": "L1",
-        "sdo:name": "Lesson 1, Introduction",
-        "dc:description":"A demo lesson.",
-        "oer:AssociatedMaterial": "ex:AM1"
-    }
- </script>
-
+  {
+    "@context": [
+      {"sdo": "http://schema.org/"},
+      {"oer": "http://oerschema.org/"},
+      {"ex": "http://example.org/"}
+    ],
+      "@type": ["oer:Lesson",
+                "sdo:CreativeWork"],
+      "@id": "ex:L1",
+      "sdo:name": "Lesson 1, Introduction",
+      "sod:description":"A demo lesson.",
+      "oer:AssociatedMaterial": "ex:AM1",
+      "sdo:hasPart": "ex:L1#v"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": [
+      {"sdo": "http://schema.org/"},
+      {"oer": "http://oerschema.org/"},
+      {"ex": "http://example.org/"}
+    ],
+    "@type": ["oer:SupportingMaterial",
+              "sdo:CreativeWork"],
+    "@id": "ex:L1#v",
+    "sdo:name": "Lesson 1, Introduction: Video"
+  }
+  </script>
   <h1>Demo of Customizable LD checker</h1>
-  <p>Embedded in this HTML is some JSON-LD metadata that uses oerschema and schema.org terms that could describe a lesson. Validating it in well known linked data checkers will raise some spurious errors and miss some real errors.</p>
+  <p>Embedded in this HTML is some JSON-LD metadata that uses oerschema and schema.org terms that could describe a lesson. Validating it in well known linked data checkers will raise some spurious errors and miss some real errors. Validating with the Customizable LD checker will validate against schema.org + oerschema, with a couple of additional requirements on the entities that must be present (there must be something related to a Course) and properties that must be provided (there must be a name and description).  These additional schemas and requirements are what is customizable.</p>
+  <script>
+    var url = window.location.href;
+    var service = "http://ocxchecker.appspot.com/?url="
+    document.write("<a href='",service,url,"'>Try with this doc.</a>");
+  </script>
+
   <h2>Google structured data testing tool</h2>
   <p>Perhaps the most widely used testing tool for structured data based on schema.org (the most widely used vocabulary). </p>
-  <p>Notes:
+  <script>
+    var url = window.location.href;
+    var service = "https://search.google.com/structured-data/testing-tool#url="
+    document.write("<a href='",service,url,"'>Try with this doc.</a>");
+  </script>
+  <p>Notes:</p>
     <ul>
-      <li>SDTT will complain about not knowing about terms from the oer: namespace</li>
+      <li>SDTT will complain about not knowing about terms from the oer: namespace (or other namespaces other than schema.org)</li>
       <li>SDTT will complain about absence of terms that Google needs for some of its services</li>
     </ul>
-  </p>
+  <h2>Google's rich results test</h2>
+  <p>Still-in-beta update of the SDTT. Even more focussed on schema.org, Google search results and other Google services</p>
+  <script>
+    var url = window.location.href;
+    var service = "https://search.google.com/test/rich-results?url="
+    document.write("<a href='",service,url,"'>Try with this doc.</a>");
+  </script>
+  <p>Notes:</p>
+    <ul>
+      <li>Doesn't report on anything it doesn't understand, which in this case is everything.</li>
+    </ul>
+  <h2>Structured data validator</h2>
+  <p>From the Russian search engine Yandex, but without any expectation that data will be schema.org or geared towards a specific product. Has a useful API for bulk tests.</p>
+  <a href= "https://webmaster.yandex.com/tools/microtest/">Try it</a> (copy and paste URL of this doc)
+  <p>Notes:</p>
+    <ul>
+      <li>Passes anything that has a valid looking structure, in this case errors like "sod:description" instead of "sdo:description" do not get picked up.</li>
+    </ul>
+  <h2>Structured data linter</h2>
+  <p>Probably the most flexible. Knows about some vocabularies other than schema.org but ignores errors from those that it does not know about. Open source, in Ruby.</p>
+  <script>
+    var url = window.location.href;
+    var service = "http://linter.structured-data.org/?url="
+    document.write("<a href='",service,url,"'>Try with this doc.</a>");
+  </script>
+  <p>Notes:</p>
+  <ul>
+    <li>Passes anything that has a valid looking structure, in this case errors like "sod:description" instead of "sdo:description" do not get picked up.</li>
+  </ul>
 
 
 

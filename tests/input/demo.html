@@ -1,0 +1,34 @@
+<html>
+<head><title>A test</title></head>
+<body> <-- A test & demo for checking oerschema and  schema.org-->
+  <script type="application/ld+json">
+    {
+      "@context": [
+        {"sdo": "http://schema.org/"},
+        {"oer": "http://oerschema.org/"},
+        {"@base": "http://example.org/id/"},
+        {"ex": "http://example.org/"}
+      ],
+        "@type": ["oer:Lesson", "sdo:CreativeWork"],
+        "@id": "L1",
+        "sdo:name": "Lesson 1, Introduction",
+        "dc:description":"A demo lesson.",
+        "oer:AssociatedMaterial": "ex:AM1"
+    }
+ </script>
+
+  <h1>Demo of Customizable LD checker</h1>
+  <p>Embedded in this HTML is some JSON-LD metadata that uses oerschema and schema.org terms that could describe a lesson. Validating it in well known linked data checkers will raise some spurious errors and miss some real errors.</p>
+  <h2>Google structured data testing tool</h2>
+  <p>Perhaps the most widely used testing tool for structured data based on schema.org (the most widely used vocabulary). </p>
+  <p>Notes:
+    <ul>
+      <li>SDTT will complain about not knowing about terms from the oer: namespace</li>
+      <li>SDTT will complain about absence of terms that Google needs for some of its services</li>
+    </ul>
+  </p>
+
+
+
+</body>
+</html>

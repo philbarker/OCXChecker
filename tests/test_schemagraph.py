@@ -23,3 +23,6 @@ def test_init():
     # graph has ocx info in it
     c = g.value(OCX.SupplementalMaterial, RDFS.subClassOf, None)
     assert OER.AssociatedMaterial == c
+    # graph has RDF/S info in it
+    assert (RDFS.Class, RDF.type, RDFS.Class) in g
+    assert (RDF.type, RDF.type, RDF.Property) in g

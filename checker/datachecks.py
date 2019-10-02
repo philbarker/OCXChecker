@@ -278,8 +278,7 @@ class DataChecks:
             p=True,
         )
         for s, p, o in self.graph.triples((None, None, None)):
-            if p in self.schema_graph.subjects(RDF.type, RDF.Property):
-                result["results"].append(self.check_predicate(s, p, o))
+            result["results"].append(self.check_predicate(s, p, o))
         # FIXME: following should be aggregate_errors() utility function
         warn = False
         for r in result["results"]:

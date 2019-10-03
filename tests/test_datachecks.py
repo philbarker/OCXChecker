@@ -88,12 +88,12 @@ def test_subject_predicate_check():
     assert w in result["warnings"]
     # test for predicate used on subject of unknown type
     s = URIRef(u"http://example.org/#NoType")
-    p = URIRef(u"http://schema.org/name")
+    p = URIRef(u"http://schema.org/hasPart")
     result = dc.subject_predicate_check(s, p)
     assert not result["passes"]
     assert "used on subject named  atypical" in result["info"]
-    assert "subject is of type [no label], [no label]" in result["info"]
-    assert "property has expected domain Thing" in result["info"]
+    assert "subject is of type [no label], Thing" in result["info"]
+    assert "property has expected domain CreativeWork" in result["info"]
     # test for predicate used on subject of known invalid type
     s = URIRef(u"http://example.org/#Lesson")
     p = URIRef(u"http://schema.org/foundingDate")

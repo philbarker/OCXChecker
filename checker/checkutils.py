@@ -82,7 +82,7 @@ def get_types(data_graph, schema_graph, e):
             types = get_parent_classes(schema_graph, a_type, types)
         types = deduplicate(types)
         if type_labels == "":
-            types = [SDO.URL, RDFS.Resource]
+            types = [RDFS.Resource, SDO.Thing]
             type_labels = "untyped URIRef"
         else:
             types.append(RDFS.Resource)

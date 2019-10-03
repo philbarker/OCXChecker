@@ -63,7 +63,7 @@ def test_get_types():
     s = URIRef(u"http://example.org/#NoType")
     (type_name, types) = get_types(dg, sg, s)
     assert type_name == "untyped URIRef"
-    assert URIRef("http://schema.org/URL") in types
+    assert URIRef("http://schema.org/Thing") in types
     assert URIRef("http://www.w3.org/2000/01/rdf-schema#Resource") in types
     s = BNode("blank")
     (type_name, types) = get_types(dg, sg, s)

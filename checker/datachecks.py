@@ -120,19 +120,19 @@ class DataChecks:
         valid_subject_types = []
         p_domain_labels = ""
         if p in self.schema_graph.subjects(None, None):
-            for p_domain in self.schema_graph.objects(p, SDO.domainIncludes):
-                valid_subject_types.append(p_domain)
-                p_domain_label = schema_label_string(
-                    self.schema_graph, p_domain, "", ", "
-                )
-                p_domain_labels = p_domain_labels + p_domain_label
+            for rel in [SDO.domainIncludes, RDFS.domain]:
+                for p_domain in self.schema_graph.objects(p, rel):
+                    valid_subject_types.append(p_domain)
+                    p_domain_label = schema_label_string(
+                        self.schema_graph, p_domain, "", ", "
+                    )
+                    p_domain_labels = p_domain_labels + p_domain_label
             if len(valid_subject_types) > 0:
                 p_domain_labels = p_domain_labels[:-2]
             else:
-                result.add_warning(
-                    "not checked: no domain defined for predicate in schema graph"
-                )
-        else:
+                w = "not checked: no domain defined for predicate in schema graph"
+                result.add_warning(w)
+        else: # p not in schema_graph.subjects
             result.add_warning("not checked: predicate not in schema graph")
         type_name, types = get_types(self.graph, self.schema_graph, s)
         types_string = labels_string(self.schema_graph, types)
@@ -200,12 +200,13 @@ class DataChecks:
         valid_object_types = []
         p_range_labels = ""
         if p in self.schema_graph.subjects(None, None):
-            for p_range in self.schema_graph.objects(p, SDO.rangeIncludes):
-                valid_object_types.append(p_range)
-                p_range_label = schema_label_string(
-                    self.schema_graph, p_range, "", ", "
-                )
-                p_range_labels = p_range_labels + p_range_label
+            for rel in [SDO.rangeIncludes, RDFS.range]:
+                for p_range in self.schema_graph.objects(p, rel):
+                    valid_object_types.append(p_range)
+                    p_range_label = schema_label_string(
+                        self.schema_graph, p_range, "", ", "
+                    )
+                    p_range_labels = p_range_labels + p_range_label
             if len(valid_object_types) > 0:
                 p_range_labels = p_range_labels[:-2]
             else:

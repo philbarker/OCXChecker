@@ -119,7 +119,7 @@ class DataChecks:
             result.add_info("subject must be a URI or BNode")
         valid_subject_types = []
         p_domain_labels = ""
-        if p in self.schema_graph.subjects(None, None):
+        if p in self.schema_graph.subjects(RDF.type, RDF.Property):
             for rel in [SDO.domainIncludes, RDFS.domain]:
                 for p_domain in self.schema_graph.objects(p, rel):
                     valid_subject_types.append(p_domain)
@@ -132,7 +132,7 @@ class DataChecks:
             else:
                 w = "not checked: no domain defined for predicate in schema graph"
                 result.add_warning(w)
-        else:  # p not in schema_graph.subjects
+        else:  # p not RDF:Property in schema_graph
             result.add_warning("not checked: predicate not in schema graph")
         type_name, types = get_types(self.graph, self.schema_graph, s)
         types_string = labels_string(self.schema_graph, types)
@@ -199,7 +199,7 @@ class DataChecks:
             result.add_info("object is of type " + type(o).__name__)
         valid_object_types = []
         p_range_labels = ""
-        if p in self.schema_graph.subjects(None, None):
+        if p in self.schema_graph.subjects(RDF.type, RDF.Property):
             for rel in [SDO.rangeIncludes, RDFS.range]:
                 for p_range in self.schema_graph.objects(p, rel):
                     valid_object_types.append(p_range)
@@ -212,7 +212,7 @@ class DataChecks:
             else:
                 w = "not checked: no range defined for predicate in schema graph"
                 result.add_warning(w)
-        else:
+        else:  # p not rdf:Property in schema_graph
             result.add_warning("not checked: predicate not in schema graph")
         type_name, types = get_types(self.graph, self.schema_graph, o)
         if types == []:

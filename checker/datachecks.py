@@ -119,14 +119,19 @@ class DataChecks:
             result.add_info("subject must be a URI or BNode")
         valid_subject_types = []
         p_domain_labels = ""
-        valid_p = False  # predicate is valid only if it is in the schema graph
-        for p_domain in self.schema_graph.objects(p, SDO.domainIncludes):
-            valid_p = True
-            valid_subject_types.append(p_domain)
-            p_domain_label = schema_label_string(self.schema_graph, p_domain, "", ", ")
-            p_domain_labels = p_domain_labels + p_domain_label
-        if valid_p:
-            p_domain_labels = p_domain_labels[:-2]
+        if p in self.schema_graph.subjects(None, None):
+            for p_domain in self.schema_graph.objects(p, SDO.domainIncludes):
+                valid_subject_types.append(p_domain)
+                p_domain_label = schema_label_string(
+                    self.schema_graph, p_domain, "", ", "
+                )
+                p_domain_labels = p_domain_labels + p_domain_label
+            if len(valid_subject_types) > 0:
+                p_domain_labels = p_domain_labels[:-2]
+            else:
+                result.add_warning(
+                    "not checked: no domain defined for predicate in schema graph"
+                )
         else:
             result.add_warning("not checked: predicate not in schema graph")
         type_name, types = get_types(self.graph, self.schema_graph, s)
@@ -194,11 +199,20 @@ class DataChecks:
             result.add_info("object is of type " + type(o).__name__)
         valid_object_types = []
         p_range_labels = ""
-        for p_range in self.schema_graph.objects(p, SDO.rangeIncludes):
-            valid_object_types.append(p_range)
-            p_range_label = schema_label_string(self.schema_graph, p_range, "", ", ")
-            p_range_labels = p_range_labels + p_range_label
-        p_range_labels = p_range_labels[:-2]
+        if p in self.schema_graph.subjects(None, None):
+            for p_range in self.schema_graph.objects(p, SDO.rangeIncludes):
+                valid_object_types.append(p_range)
+                p_range_label = schema_label_string(
+                    self.schema_graph, p_range, "", ", "
+                )
+                p_range_labels = p_range_labels + p_range_label
+            if len(valid_object_types) > 0:
+                p_range_labels = p_range_labels[:-2]
+            else:
+                w = "not checked: no range defined for predicate in schema graph"
+                result.add_warning(w)
+        else:
+            result.add_warning("not checked: predicate not in schema graph")
         type_name, types = get_types(self.graph, self.schema_graph, o)
         if types == []:
             object_type_known = False
@@ -216,7 +230,7 @@ class DataChecks:
                 "points to object of type " + labels_string(self.schema_graph, types)
             )
         else:
-            result.add_warning("object type not known")
+            result.add_warning("not checked: object type not known")
         if range_valid:
             result.set_passes(True)
         elif type(o) is Literal:

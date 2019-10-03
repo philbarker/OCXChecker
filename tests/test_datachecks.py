@@ -136,7 +136,8 @@ def test_predicate_object_check():
     o = None
     result = dc.predicate_object_check(p, o)
     assert not result["passes"]
-    assert result["warnings"] == ["object type not known"]
+    assert "not checked: predicate not in schema graph" in result["warnings"]
+    assert "not checked: object type not known" in result["warnings"]
     assert result["info"][0] == "predicate must be a URI"
     assert result["info"][1] == "object must be a URI, BNode or Literal"
     # tests for predicate used with object of known valid type
@@ -158,15 +159,15 @@ def test_predicate_object_check():
     o = BNode()
     result = dc.predicate_object_check(p, o)
     assert result["passes"]
-    assert result["info"][0] == "property has expected range CreativeWork"
-    assert result["warnings"][0] == "object type not known"
+    assert "property has expected range CreativeWork" in result["info"]
+    assert "not checked: object type not known" in result["warnings"]
     # tests for predicate used with valid URIRef object, but unknown type
     p = URIRef(u"http://schema.org/hasPart")
     o = URIRef(u"http://example.org/part")
     result = dc.predicate_object_check(p, o)
     assert result["passes"]
-    assert result["info"][0] == "property has expected range CreativeWork"
-    assert result["warnings"][0] == "object type not known"
+    assert "property has expected range CreativeWork" in result["info"]
+    assert "not checked: object type not known" in result["warnings"]
     # tests for predicate used with object of invalid type
     p = URIRef(u"http://schema.org/name")
     o = URIRef(u"http://example.org/#LectureVideo")

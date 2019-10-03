@@ -84,8 +84,7 @@ def test_subject_predicate_check():
     p = URIRef(u"http://example.org/nonsense")
     result = dc.subject_predicate_check(s, p)
     assert not result["passes"]
-    w = "not checked: predicate not in schema graph"
-    assert w in result["warnings"]
+    assert result["warnings"] == []
     # test for predicate used on subject of unknown type
     s = URIRef(u"http://example.org/#NoType")
     p = URIRef(u"http://schema.org/hasPart")
@@ -133,10 +132,9 @@ def test_predicate_object_check():
     o = None
     result = dc.predicate_object_check(p, o)
     assert not result["passes"]
-    assert "not checked: predicate not in schema graph" in result["warnings"]
-    assert "not checked: object type not known" in result["warnings"]
-    assert result["info"][0] == "predicate must be a URI"
-    assert result["info"][1] == "object must be a URI, BNode or Literal"
+    assert "predicate not in schema graph" in result["info"]
+    assert "predicate must be a URI" in result["info"]
+    assert "object must be a URI, BNode or Literal" in result["info"]
     # tests for predicate used with object of known valid type
     p = URIRef(u"http://schema.org/hasPart")
     o = URIRef(u"http://example.org/#Lesson")

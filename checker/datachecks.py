@@ -133,7 +133,9 @@ class DataChecks:
                 w = "not checked: no domain defined for predicate in schema graph"
                 result.add_warning(w)
         else:  # p not RDF:Property in schema_graph
-            result.add_warning("not checked: predicate not in schema graph")
+            result.set_passes(False)
+            result.add_info("predicate not in schema graph")
+            return result
         type_name, types = get_types(self.graph, self.schema_graph, s)
         types_string = labels_string(self.schema_graph, types)
         s_name = ""
@@ -213,7 +215,9 @@ class DataChecks:
                 w = "not checked: no range defined for predicate in schema graph"
                 result.add_warning(w)
         else:  # p not rdf:Property in schema_graph
-            result.add_warning("not checked: predicate not in schema graph")
+            result.set_passes(False)
+            result.add_info("predicate not in schema graph")
+            return result
         type_name, types = get_types(self.graph, self.schema_graph, o)
         if type_name[:7] == "untyped":
             object_type_known = False

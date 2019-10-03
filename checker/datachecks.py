@@ -132,7 +132,7 @@ class DataChecks:
             else:
                 w = "not checked: no domain defined for predicate in schema graph"
                 result.add_warning(w)
-        else: # p not in schema_graph.subjects
+        else:  # p not in schema_graph.subjects
             result.add_warning("not checked: predicate not in schema graph")
         type_name, types = get_types(self.graph, self.schema_graph, s)
         types_string = labels_string(self.schema_graph, types)

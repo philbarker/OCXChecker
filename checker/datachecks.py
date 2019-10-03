@@ -215,9 +215,7 @@ class DataChecks:
         else:  # p not rdf:Property in schema_graph
             result.add_warning("not checked: predicate not in schema graph")
         type_name, types = get_types(self.graph, self.schema_graph, o)
-        if types == []:
-            object_type_known = False
-        elif types == [SDO.URL]:  # URL could be anything
+        if type_name[:7] == "untyped":
             object_type_known = False
         else:
             object_type_known = True

@@ -1,6 +1,6 @@
 # utility functions used by DataChecks kept here to declutter
 from rdflib import Namespace, Literal, URIRef, BNode
-from rdflib.namespace import RDF, RDFS
+from rdflib.namespace import RDF, RDFS, OWL
 
 SDO = Namespace("http://schema.org/")
 
@@ -51,39 +51,64 @@ def get_parent_classes(graph, t, p):
     parents.append(t)
     for parent in graph.objects(t, RDFS.subClassOf):
         parents = get_parent_classes(graph, parent, parents)
+    sib_rels = [OWL.equivalentClass, OWL.sameAs]
+    sibs = []
+    for rel in sib_rels:
+        for sib in graph.subjects(rel, t):
+            sibs.append(sib)
+        for sib in graph.subjects(t, rel):
+            sibs.append(sib)
+    for sibling in sibs:
+        parents.append(sibling)
+        for parent in graph.objects(sibling, RDFS.subClassOf):
+            parents = get_parent_classes(graph, parent, parents)
     return parents
 
 
 def get_types(data_graph, schema_graph, e):
-    """Return the a string with the names of the type of an entity and a list of those types and their parents."""
+    """Return a list of the types of an entity and their parent-types, and string with the names of those types."""
     type_labels = ""
     types = []
     if type(e) is URIRef:
+        for a_type in schema_graph.objects(e, RDF.type):
+            type_labels = type_labels + schema_label_string(
+                schema_graph, a_type, "", ", "
+            )
+            types = get_parent_classes(schema_graph, a_type, types)
         for a_type in data_graph.objects(e, RDF.type):
             type_labels = type_labels + schema_label_string(
                 schema_graph, a_type, "", ", "
             )
             types = get_parent_classes(schema_graph, a_type, types)
         types = deduplicate(types)
-        type_labels = type_labels[:-2]
         if type_labels == "":
-            types = [SDO.URL]
-            type_labels = "URIRef"
+            types = [SDO.URL, RDFS.Resource]
+            type_labels = "untyped URIRef"
+        else:
+            types.append(RDFS.Resource)
+            type_labels = type_labels[:-2]
     elif type(e) is BNode:
+        for a_type in schema_graph.objects(e, RDF.type):
+            type_labels = type_labels + schema_label_string(
+                schema_graph, a_type, "", ", "
+            )
+            types = get_parent_classes(schema_graph, a_type, types)
         for a_type in data_graph.objects(e, RDF.type):
             type_labels = type_labels + schema_label_string(
                 schema_graph, a_type, "", ", "
             )
             types = get_parent_classes(schema_graph, a_type, types)
         types = deduplicate(types)
-        type_labels = type_labels[:-2]
         if type_labels == "":
-            types = []
-            type_labels = "Untyped BNode"
+            types = [RDFS.Resource, SDO.Thing]
+            type_labels = "untyped BNode"
+        else:
+            types.append(RDFS.Resource)
+            type_labels = type_labels[:-2]
     elif type(e) is Literal:
         types = [SDO.Text]
         type_labels = "Text"
     else:
         types = []
-        type_labels = "failed to determine type"
+        type_labels = "untyped: failed to determine type"
     return type_labels, types

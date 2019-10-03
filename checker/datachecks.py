@@ -364,22 +364,25 @@ class DataChecks:
             return result
         uri = str(e)
         for t in self.graph.objects(e, RDF.type):
-            result.set_passes(True)
-            result.add_info("RDF type is " + t)
             if t in self.schema_graph.subjects(RDF.type, RDFS.Class):
+                result.set_passes(True)
+                result.add_info("RDF type is " + t)
                 label = self.schema_graph.label(t)
-                parent = self.schema_graph.value(t, SDO.isPartOf, None)
-                if parent:
-                    pass
-                else:
-                    parent = "oerschema.org"
-                msg = "this type is known as " + label + " from " + parent
+#  FIXME: need to identify schema from which entity types are drawn
+#                parent = self.schema_graph.value(t, SDO.isPartOf, None)
+#                if parent:
+#                    pass
+#                else:
+#                    parent = "an unknown schema"
+#                msg = "this type is known as " + label + " from " + parent
+                msg = "this type is known as " + label
                 result.add_info(msg)
             else:
-                result.add_warning("this type is unknown")
-        if not result["passes"]:
+                result.add_info("entity type given as " + str(t))
+                result.add_info("this type is unknown")
+        if result["info"] == []:
             result.set_passes(False)
-            result.add_info("this entity is of unspecified type.")
+            result.add_info("this entity is of unknown type.")
         return result
 
     def check_entity_description(self, e):

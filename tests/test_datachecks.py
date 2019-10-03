@@ -325,8 +325,8 @@ def test_check_entity_type():
     e = URIRef("http://example.org/#Lesson")
     result = dc.check_entity_type(e)
     assert result["passes"]
-    i1 = "this type is known as Course from oerschema.org"
-    i2 = "this type is known as Lesson from oerschema.org"
+    i1 = "this type is known as Course"
+    i2 = "this type is known as Lesson"
     assert result["name"] == "check entity type"
     assert result["description"] == "entity has known RDF:type"
     assert i1 in result["info"]
@@ -342,14 +342,17 @@ def test_check_entity_type():
     e = URIRef("http://example.org/#NoType")
     result = dc.check_entity_type(e)
     assert not result["passes"]
-    assert result["info"] == ["this entity is of unspecified type."]
+    assert "this entity is of unknown type." in result["info"]
     assert result["warnings"] == []
     # unknown type
     e = URIRef("http://example.org/#Ref4")
     result = dc.check_entity_type(e)
-    assert result["passes"]
-    assert result["info"] == []
-    assert result["warnings"] == ["this type is unknown"]
+    assert not result["passes"]
+    i1 = "entity type given as http://schema.org/ReferencedMaterial"
+    i2 = "this type is unknown"
+    assert i1 in result["info"]
+    assert i2 in result["info"]
+    assert result["warnings"] == []
 
 
 def test_check_entity_ndt():

@@ -1,3 +1,4 @@
+from flask import Flask, request
 from rdflib import Namespace
 from .pagedata import PageData
 from .ocxgraph import OCXGraph
@@ -24,6 +25,44 @@ primary_ocx_types = [
     OCX.ReferencedMaterial,
 ]
 
+def create_app(test_config=None):
+    # create and configure the app
+    # from https://flask.palletsprojects.com/en/1.1.x/tutorial/factory/
+    app = Flask(__name__, instance_relative_config=True)
+
+    if test_config is None:
+        # load the instance config, if it exists, when not testing
+        app.config.from_pyfile('config.py', silent=True)
+    else:
+        # load the test config if passed in
+        app.config.from_mapping(test_config)
+
+    # a simple page that says hello
+    @app.route('/hello')
+    def hello():
+        return 'Hello, World!'
+
+    @app.route("/")
+    def checker():
+        checker = Checker(request.args)
+        result = checker.do_checks()
+        report = checker.make_report(result)
+        return report.html
+
+
+    @app.route("/info")
+    def info():
+        info = "Usage <host>:8080?url=<url>&showTurtle=True\n"
+        info = (
+            info
+            + "e.g. "
+            + request.host_url
+            + "?url=https://philbarker.github.io/OCXPhysVibWav/l1/\n"
+        )
+        info = info + "Running on python version" + version
+        return escape(info)
+
+    return app
 
 class Checker:
     """ Comprises the page retrieved from the request url,

@@ -92,7 +92,7 @@ class Checker:
 
     def make_report(self, result):
         report = Report(self.verbose)
-        report.header(
+        report.add_header(
             self.page_data.request_url,
             self.page_data.base_url,
             self.page_data.status_code,

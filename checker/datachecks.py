@@ -372,13 +372,13 @@ class DataChecks:
                 result.set_passes(True)
                 result.add_info("RDF type is " + t)
                 label = self.schema_graph.label(t)
-#  FIXME: need to identify schema from which entity types are drawn
-#                parent = self.schema_graph.value(t, SDO.isPartOf, None)
-#                if parent:
-#                    pass
-#                else:
-#                    parent = "an unknown schema"
-#                msg = "this type is known as " + label + " from " + parent
+                #  FIXME: need to identify schema from which entity types are drawn
+                #                parent = self.schema_graph.value(t, SDO.isPartOf, None)
+                #                if parent:
+                #                    pass
+                #                else:
+                #                    parent = "an unknown schema"
+                #                msg = "this type is known as " + label + " from " + parent
                 msg = "this type is known as " + label
                 result.add_info(msg)
             else:

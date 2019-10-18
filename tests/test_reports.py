@@ -1,11 +1,12 @@
 from checker import Report, CheckResult, create_app
 import pytest, pprint
 
-pp= pprint.PrettyPrinter(indent=4) #used for debugging
+pp = pprint.PrettyPrinter(indent=4)  # used for debugging
 
-@pytest.fixture(scope='module')
+
+@pytest.fixture(scope="module")
 def test_client():
-    config = {'TESTING': True}
+    config = {"TESTING": True}
     app = create_app(config)
     testing_client = app.test_client()
     ctx = app.app_context()
@@ -13,38 +14,40 @@ def test_client():
     yield testing_client
     ctx.pop()
 
-@pytest.fixture(scope='module')
+
+@pytest.fixture(scope="module")
 def report():
     r = Report(True)
     return r
 
-@pytest.fixture(scope='module')
+
+@pytest.fixture(scope="module")
 def result():
     r = CheckResult(
         n="dummy results",
         d="dummy results for primary entities, properties of names entities and subject and object of all predicates",
         p=False,
     )
-    r.add_info('some dummy information')
-    r.add_warning('a dummy warning')
+    r.add_info("some dummy information")
+    r.add_warning("a dummy warning")
     r1 = CheckResult(
         n="primary entities present",
         d="check that there is at least one primary entity",
         p=False,
     )
-    r1.add_info('set up to fail')
+    r1.add_info("set up to fail")
     r2 = CheckResult(
         n="check of all indentified entities",
         d="entities with URI have name, description and type",
         p=True,
     )
-    r2.add_info('a winner from the start')
+    r2.add_info("a winner from the start")
     r3 = CheckResult(
         n="predicate checks",
         d="subjects are in predicates' domains, and objects are in predicates' ranges for all statements",
         p=True,
     )
-    r3.add_warning('none of this is real')
+    r3.add_warning("none of this is real")
     r.add_result([r1, r2, r3])
     return r
 
@@ -56,11 +59,12 @@ def test_init(test_client, report):
     assert "</head>\n" in report.html
     assert "<body>\n" in report.html
 
+
 def test_add_header(test_client, report):
     report.add_header(
-        request_url = 'http://example.org/',
-        base_url = 'http://example.org/index.html',
-        status_code = '200'
+        request_url="http://example.org/",
+        base_url="http://example.org/index.html",
+        status_code="200",
     )
     expected_input_summary = """
     <li><strong>Requested URL:</strong> http://example.org/ </li>
@@ -68,6 +72,7 @@ def test_add_header(test_client, report):
     <li><strong>Status code:</strong>  200 </li>"""
     assert "<body>\n" in report.html
     assert expected_input_summary in report.html
+
 
 def test_sections(test_client, report, result):
     # this will only test the very basics of getting the right
@@ -80,6 +85,7 @@ def test_sections(test_client, report, result):
     assert expected_entity_section in report.html
     assert expected_entity_check_section in report.html
     assert expected_predicate_checks_section in report.html
+
 
 def test_end_report(test_client, report):
     report.end_report()

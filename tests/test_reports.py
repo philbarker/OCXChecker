@@ -1,18 +1,7 @@
-from checker import Report, CheckResult, create_app
+from checker import Report, CheckResult
 import pytest, pprint
 
 pp = pprint.PrettyPrinter(indent=4)  # used for debugging
-
-
-@pytest.fixture(scope="module")
-def test_client():
-    config = {"TESTING": True}
-    app = create_app(config)
-    testing_client = app.test_client()
-    ctx = app.app_context()
-    ctx.push()
-    yield testing_client
-    ctx.pop()
 
 
 @pytest.fixture(scope="module")

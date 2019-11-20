@@ -12,6 +12,7 @@ Run this in a python 3.7 virtual environment
 $ git clone https://github.com/philbarker/OCXChecker.git
 $ cd OCXChecker
 $ pip install -r requirements.txt
+$ python setup.py develop 
 $ python main.py
 ```
 Open http://127.0.0.1:8080/?urlYouWantToCheck in a browser.

@@ -7,6 +7,8 @@
 @prefix ocx: <https://github.com/K12OCX/k12ocx-specs/> .
 
 
+oer:Resource owl:equivalentClass sdo:CreativeWork .
+
 ocx:ReferencedMaterial a rdfs:Class ;
     owl:equivalentClass oer:ReferencedMaterial ;
     rdfs:label "ReferencedMaterial" ;

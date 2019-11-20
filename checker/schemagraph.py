@@ -1,25 +1,18 @@
 from rdflib import Graph
+from glob import glob
 
-sdo_schema_location = "./schemas/schema_all.ttl"
-sdo_schema_format = "turtle"
-oer_schema_location = "./schemas/oerschema.ttl"
-oer_schema_format = "turtle"
-ocx_schema_location = "./schemas/ocx.ttl"
-ocx_schema_format = "turtle"
+schema_location = "./schemas/"
 
 
 class SchemaGraph(Graph):
+    """read in the RDFschema from hard coded file locations and build graph"""
+
     def __init__(self):
+        """read in the schema files from the hard coded file location and build graph"""
         super().__init__()
-        try:
-            self.parse(location=sdo_schema_location, format=sdo_schema_format)
-        except:
-            raise RuntimeError("cannot make graph of schema.org rdfs")
-        try:
-            self.parse(location=oer_schema_location, format=oer_schema_format)
-        except:
-            raise RuntimeError("cannot make graph of OERSchema rdfs")
-        try:
-            self.parse(location=ocx_schema_location, format=ocx_schema_format)
-        except:
-            raise RuntimeError("cannot make graph of OCX rdfs")
+        ttl_schema_files = glob(schema_location + "*.ttl")
+        for ttl_file in ttl_schema_files:
+            try:
+                self.parse(location=ttl_file, format="turtle")
+            except:
+                raise RuntimeError("cannot make graph of " + ttl_file)

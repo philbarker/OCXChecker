@@ -1,0 +1,43 @@
+@prefix ocx: <https://github.com/K12OCX/k12ocx-specs/> .
+@prefix oer: <http://oerschema.org/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sdo: <http://schema.org/> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://example.org/#Ref> a ocx:ReferencedMaterial .
+
+<http://example.org/#Ref2> a ocx:ReferencedMaterial ;
+    sdo:name "reference material" , "with 2 names" ;
+    sdo:description "reference material" , "with 2 descriptions" .
+
+<http://example.org/#Ref3> a ocx:ReferencedMaterial ;
+      sdo:name <http://example.org/#Ref> ;
+      sdo:description <http://example.org/#Ref> .
+
+<http://example.org/#Ref4> a sdo:ReferencedMaterial .
+
+<http://example.org/#NoType> sdo:name 'atypical' .
+
+<http://example.org/#Lesson> a oer:Lesson,
+        sdo:Course ;
+    sdo:about "Hooke's Law",
+        "periodic motion",
+        "simple harmonic oscillators" ;
+    sdo:creator "Yen-Jie Lee" ;
+    sdo:description "In this lecture, Prof. Lee discusses the mathematical description of the periodic oscillation and simple harmonic oscillators. The first 5 minutes are devoted to course information." ;
+    sdo:hasPart <http://example.org/#LectureVideo>;
+    sdo:name "Lecture 1: Periodic Oscillations, Harmonic Oscillators" .
+
+<http://example.org/#LectureVideo> a oer:SupportingMaterial,
+        sdo:CreativeWork ;
+    sdo:audience [ a sdo:EducationalAudience ;
+            sdo:educationalRole "learner" ] ;
+    sdo:learningResourceType "LectureRecording" ;
+    sdo:name "Lecture Video: Periodic Oscillations, Harmonic Oscillators",
+        "Lecture video" .
+
+<http://example.org/#Douglas> a sdo:Organization ;
+    sdo:name "Douglas" ;
+    sdo:description "in the jungle" .

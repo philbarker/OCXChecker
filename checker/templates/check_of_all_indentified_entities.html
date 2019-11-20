@@ -1,5 +1,5 @@
 <section id="enitity-check">
-  <h2>Report on {{results.name | e}}</h2> {# all named entity checks #}
+  <h2>Report on {{results.name | e}}</h2> {# check of all indentified entities #}
   <p>Check that {{results.description | e}}.</p>
   {% for result in results['results'] %}
     <h3>Report on {{result.name | e}}</h3> {# check entity #}

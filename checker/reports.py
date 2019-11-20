@@ -6,7 +6,7 @@ class Report:
         self.verbose = verbose
         self.html = render_template("head.html")
 
-    def header(self, request_url, base_url, status_code):
+    def add_header(self, request_url, base_url, status_code):
         self.html = self.html + render_template(
             "header.html",
             request_url=request_url,

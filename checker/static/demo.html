@@ -14,7 +14,9 @@
       "@id": "ex:L1",
       "sdo:name": "Lesson 1, Introduction",
       "sdo:description":"A demo lesson.",
-      "sdo:hasPart": ["ex:AM1", "ex:L1#v"]
+      "sdo:hasPart": [
+        {"@id": "ex:AM1"},
+        {"@id": "ex:L1#video"}]
   }
   </script>
   <script type="application/ld+json">
@@ -26,7 +28,7 @@
     ],
     "@type": ["oer:SupportingMaterial",
               "sdo:CreativeWork"],
-    "@id": "ex:L1#v",
+    "@id": "ex:L1#video",
     "sdo:name": "Lesson 1, Introduction: Video",
     "sod:description":"It's really easy to mistype namespace prefixes."
   }
@@ -51,6 +53,13 @@
     var service = "http://ocxchecker.appspot.com/?url="
     document.write("<a href='",service,url,"'>Try with this doc.</a>");
   </script>
+  <p>Notes:</p>
+  <ul>
+    <li>There is a fail where CreativeWork has been mistyped as Creativework.</li>
+    <li>There is a fail where the name property is used on an unexpected type (the mistyped Creativework).</li>
+    <li>There is two fails where the namespace sdo: has been mistyped sod:.</li>
+    <li>There is a warning given that a description is not present (descriptions are useful, but not essential).</li>
+  </ul>
 
   <h2>Google structured data testing tool</h2>
   <p>Perhaps the most widely used testing tool for structured data based on schema.org (the most widely used vocabulary). </p>

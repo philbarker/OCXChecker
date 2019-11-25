@@ -7,7 +7,7 @@ Checks include
 
 Runs as a flask web service.
 
-Run this in a python 3.7 virtual environment
+Run this in a python 3.7 virtual environment:
 ```
 $ git clone https://github.com/philbarker/OCXChecker.git
 $ cd OCXChecker

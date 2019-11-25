@@ -5,12 +5,12 @@ repos:
         name: black
         stages: [commit]
         language: system
-        entry: black *.py checker tests
+        entry: black main.py setup.py checker tests
         types: [python]
 
       - id: pytest
         name: pytest
         stages: [commit]
         language: system
-        entry: pytest
+        entry: pytest --disable-pytest-warnings
         types: [python]

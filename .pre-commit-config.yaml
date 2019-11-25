@@ -12,5 +12,5 @@ repos:
         name: pytest
         stages: [commit]
         language: system
-        entry: pytest --disable-pytest-warnings
+        entry: pytest
         types: [python]

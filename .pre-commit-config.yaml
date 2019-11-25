@@ -12,5 +12,5 @@ repos:
         name: pytest
         stages: [commit]
         language: system
-        entry: pytest
+        entry: pytest -p no:warning
         types: [python]

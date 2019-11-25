@@ -5,7 +5,7 @@ Checks include
 - checking that those entities have key properties such as name and description
 - checking that the subject and object of every predicate is in its domain/range.
 
-Runs as a flask web service
+Runs as a flask web service.
 
 Run this in a python 3.7 virtual environment
 ```

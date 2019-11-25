@@ -21,4 +21,5 @@ If you want to test or develop you also need
 $ pip install -r dev-reqs.txt
 $ python setup.py develop
 $ pytest
+$ pre-commit install
 ```

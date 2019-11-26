@@ -3,14 +3,14 @@ repos:
     hooks:
       - id: black
         name: black
-        stages: [commit]
+        stages: [commit, push]
         language: system
         entry: black main.py setup.py checker tests
         types: [python]
 
       - id: pytest
         name: pytest
-        stages: [commit]
+        stages: [commit, push]
         language: system
         entry: pytest -p no:warning
         types: [python]

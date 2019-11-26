@@ -102,3 +102,8 @@ table {
   ul {
     list-style: disc inside ;
   }
+
+  p.static {
+    margin-bottom: 1.2em;
+    line-height: 1.2em;
+  }

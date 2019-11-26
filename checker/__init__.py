@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 from rdflib import Namespace
 from .pagedata import PageData
 from .ocxgraph import OCXGraph
@@ -44,6 +44,11 @@ def create_app(test_config=None):
         return "Hello, World!"
 
     @app.route("/")
+    @app.route("/index.html")
+    def index():
+        return send_from_directory('./static/','index.html')
+
+    @app.route("/checker")
     def checker():
         checker = Checker(request.args)
         result = checker.do_checks()

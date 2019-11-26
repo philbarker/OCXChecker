@@ -23,7 +23,7 @@ def schema_label_string(graph, entity, before="", after=""):
         (prop, label) = graph.preferredLabel(entity)[0]
         label_string = before + label + after
     except:
-        label_string = before + "[no label]" + after
+        label_string = before + '[no label]' + after
     return label_string
 
 

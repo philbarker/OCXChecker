@@ -8,9 +8,10 @@ repos:
         entry: black main.py setup.py checker tests
         types: [python]
 
-      - id: pytest
-        name: pytest
-        stages: [commit, push]
-        language: system
-        entry: pytest -p no:warning
-        types: [python]
+#      - id: pytest
+#        name: pytest
+#        stages: [commit, push]
+#        always_run: true
+#        language: system
+#        entry: pytest
+#        types: [python]

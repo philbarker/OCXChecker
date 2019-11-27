@@ -1,5 +1,5 @@
 <html>
-<head><title>A test</title></head>
+<head><title>Linked data checker demo</title></head>
 <body>
   <!-- A test & demo for checking oerschema and  schema.org-->
   <script type="application/ld+json">
@@ -51,8 +51,8 @@
   <script>
     var url = window.location.href;
     var host = window.location.hostname;
-    var service = "http://ocxchecker.appspot.com/?url="
-    var link= service+"/check?url="+url;
+    var port = window.location.port;
+    var link= "http://"+host+":"+port+"/check?url="+url;
     document.write("<a href='",link,"'>Try with this doc.</a>");
   </script>
   <p class="static">Notes:</p>

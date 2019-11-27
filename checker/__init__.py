@@ -46,10 +46,10 @@ def create_app(test_config=None):
     @app.route("/")
     @app.route("/index.html")
     def index():
-        return send_from_directory('./static/','index.html')
+        return send_from_directory("./static/", "index.html")
 
-    @app.route("/checker")
-    def checker():
+    @app.route("/check")
+    def check():
         checker = Checker(request.args)
         result = checker.do_checks()
         report = checker.make_report(result)

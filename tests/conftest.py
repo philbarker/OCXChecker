@@ -1,6 +1,7 @@
 from checker import create_app
 import pytest
 
+
 @pytest.fixture(scope="module")
 def test_client():
     config = {"TESTING": True, "WTF_CSRF_ENABLED": False}

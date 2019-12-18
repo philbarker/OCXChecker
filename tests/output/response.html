@@ -1,0 +1,533 @@
+<html>
+<head>
+  <title>OCXChecker alpha</title>
+  <link rel="stylesheet" type="text/css"  href="./static/style.css" />
+</head>
+<body>
+  <main><header>
+  <h1>OCXChecker report</h1>
+  <h2>Report parameters</h2>
+  <ul id="input-summary">
+    <li><strong>Requested URL:</strong> https://pjjk.net/ldchecker/demo.html </li>
+    <li><strong>Returned URL:</strong> https://pjjk.net/ldchecker/demo.html </li>
+    <li><strong>Status code:</strong>  200 </li>
+  </ul>
+  
+  <p>Non-verbose report. Add &verbose=1 URL parameter to include info about tests passed.</p>
+  
+<p>^ verbose/non-verbose option not working</p>
+</header><section id="primary_entities">
+  <h2>Report on primary entities present</h2>
+  <p>
+  
+    <em class="pass">PASS:</em> check that there is at least one primary entity<br />
+  </p>
+     
+    
+</section><section id="enitity-check">
+  <h2>Report on check of all indentified entities</h2> 
+  <p>Check that entities with URI have name, description and type.</p>
+  
+    <h3>Report on check entity http://example.org/L1</h3> 
+    
+      <em class="pass">PASS:</em> entity http://example.org/L1 has name, description and type
+     <br />
+    
+    
+    
+      
+        <em class="pass">PASS:</em> entity has at least one name property, name is a string
+       <br />
+      
+        <em class="info">INFO:</em> Name = Lesson 1, Introduction <br />
+      
+      
+    
+      
+        <em class="pass">PASS:</em> description is string or absent
+       <br />
+      
+        <em class="info">INFO:</em> Description = A demo lesson. <br />
+      
+      
+    
+      
+        <em class="pass">PASS:</em> entity has known RDF:type
+       <br />
+      
+        <em class="info">INFO:</em> this type is known as Lesson <br />
+      
+        <em class="info">INFO:</em> this type is known as CreativeWork <br />
+      
+      
+    
+  
+    <h3>Report on check entity http://example.org/L2</h3> 
+    
+      <em class="fail">FAIL:</em> check entity http://example.org/L2
+     <br />
+    
+    
+    
+      
+        <em class="pass">PASS:</em> entity has at least one name property, name is a string
+       <br />
+      
+        <em class="info">INFO:</em> Name = Lesson 2, An error <br />
+      
+      
+    
+      
+        <em class="pass">PASS:</em> description is string or absent
+       <br />
+      
+        <em class="info">INFO:</em> Description = It&#39;s really easy to get the case wrong when declaring types <br />
+      
+      
+    
+      
+        <em class="fail">FAIL:</em> check entity type
+       <br />
+      
+        <em class="info">INFO:</em> entity type given as http://schema.org/Creativework <br />
+      
+        <em class="info">INFO:</em> this type is unknown <br />
+      
+      
+    
+  
+    <h3>Report on check entity http://example.org/L1#video</h3> 
+    
+      <em class="pass">PASS:</em> entity http://example.org/L1#video has name, description and type
+     <br />
+    
+    
+      <em class="warning">WARNING:</em> warnings were generated <br />
+    
+    
+      
+        <em class="pass">PASS:</em> entity has at least one name property, name is a string
+       <br />
+      
+        <em class="info">INFO:</em> Name = Lesson 1, Introduction: Video <br />
+      
+      
+    
+      
+        <em class="pass">PASS:</em> description is string or absent
+       <br />
+      
+      
+        <em class="warning">WARNING:</em> No sdo.description found. Descriptions are useful. <br />
+      
+    
+      
+        <em class="pass">PASS:</em> entity has known RDF:type
+       <br />
+      
+        <em class="info">INFO:</em> this type is known as SupportingMaterial <br />
+      
+        <em class="info">INFO:</em> this type is known as CreativeWork <br />
+      
+      
+    
+  
+</section><section id="predicate-checks">
+  <h2>Report on predicate checks</h2> 
+  <p>Check that subjects are in predicates&#39; domains, and objects are in predicates&#39; ranges for all statements.</p>
+   
+  <h3>Report on predicate check for http://schema.org/description</h3>
+  <p>Check that subject and object are in expected domain and range<br />
+    
+        <em class="info">INFO:</em> predicate in statement http://example.org/L2 http://schema.org/description It&#39;s really easy to get the case wrong when declaring types <br />
+    
+     
+      <em class="fail">FAIL</em> subject check<br />
+      
+      
+        <em class="info">INFO:</em> used on subject named  Lesson 2, An error <br />
+      
+        <em class="info">INFO:</em> subject is of type [no label], Resource <br />
+      
+        <em class="info">INFO:</em> property has expected domain Thing <br />
+      
+        <em class="info">INFO:</em> subject is of type that is not in predicate&#39;s domain <br />
+      
+      
+     
+      <em class="pass">PASS:</em> object is in predicate&#39;s range<br />
+      
+      
+        <em class="info">INFO:</em> property has expected range Text <br />
+      
+        <em class="info">INFO:</em> points to object of type Text <br />
+      
+      
+    
+  </p>
+   
+  <h3>Report on predicate check for http://schema.org/description</h3>
+  <p>Check that subject and object are in expected domain and range<br />
+    
+        <em class="info">INFO:</em> predicate in statement http://example.org/L1 http://schema.org/description A demo lesson. <br />
+    
+     
+      <em class="pass">PASS:</em> subject is in predicate&#39;s domain<br />
+      
+      
+        <em class="info">INFO:</em> used on subject named  Lesson 1, Introduction <br />
+      
+        <em class="info">INFO:</em> subject is of type Lesson, InstructionalPattern, LearningComponent, CreativeWork, Thing, Resource, [no label], Resource <br />
+      
+        <em class="info">INFO:</em> property has expected domain Thing <br />
+      
+      
+     
+      <em class="pass">PASS:</em> object is in predicate&#39;s range<br />
+      
+      
+        <em class="info">INFO:</em> property has expected range Text <br />
+      
+        <em class="info">INFO:</em> points to object of type Text <br />
+      
+      
+    
+  </p>
+   
+  <h3>Report on predicate check for http://www.w3.org/1999/02/22-rdf-syntax-ns#type</h3>
+  <p>Check that subject and object are in expected domain and range<br />
+    
+        <em class="info">INFO:</em> predicate in statement http://example.org/L1#video http://www.w3.org/1999/02/22-rdf-syntax-ns#type http://oerschema.org/SupportingMaterial <br />
+    
+     
+      <em class="pass">PASS:</em> subject is in predicate&#39;s domain<br />
+      
+      
+        <em class="info">INFO:</em> used on subject named  Lesson 1, Introduction: Video <br />
+      
+        <em class="info">INFO:</em> subject is of type SupportingMaterial, AssociatedMaterial, LearningComponent, CreativeWork, Thing, Resource, [no label], Resource <br />
+      
+        <em class="info">INFO:</em> property has expected domain Resource <br />
+      
+      
+     
+      <em class="pass">PASS:</em> object is in predicate&#39;s range<br />
+      
+      
+        <em class="info">INFO:</em> property has expected range Class <br />
+      
+        <em class="info">INFO:</em> points to object of type Class, Resource, Class, Intangible, Thing, Resource <br />
+      
+      
+    
+  </p>
+   
+  <h3>Report on predicate check for http://schema.org/name</h3>
+  <p>Check that subject and object are in expected domain and range<br />
+    
+        <em class="info">INFO:</em> predicate in statement http://example.org/L1#video http://schema.org/name Lesson 1, Introduction: Video <br />
+    
+     
+      <em class="pass">PASS:</em> subject is in predicate&#39;s domain<br />
+      
+      
+        <em class="info">INFO:</em> used on subject named  Lesson 1, Introduction: Video <br />
+      
+        <em class="info">INFO:</em> subject is of type SupportingMaterial, AssociatedMaterial, LearningComponent, CreativeWork, Thing, Resource, [no label], Resource <br />
+      
+        <em class="info">INFO:</em> property has expected domain Thing <br />
+      
+      
+     
+      <em class="pass">PASS:</em> object is in predicate&#39;s range<br />
+      
+      
+        <em class="info">INFO:</em> property has expected range Text <br />
+      
+        <em class="info">INFO:</em> points to object of type Text <br />
+      
+      
+    
+  </p>
+   
+  <h3>Report on predicate check for http://schema.org/name</h3>
+  <p>Check that subject and object are in expected domain and range<br />
+    
+        <em class="info">INFO:</em> predicate in statement http://example.org/L1 http://schema.org/name Lesson 1, Introduction <br />
+    
+     
+      <em class="pass">PASS:</em> subject is in predicate&#39;s domain<br />
+      
+      
+        <em class="info">INFO:</em> used on subject named  Lesson 1, Introduction <br />
+      
+        <em class="info">INFO:</em> subject is of type Lesson, InstructionalPattern, LearningComponent, CreativeWork, Thing, Resource, [no label], Resource <br />
+      
+        <em class="info">INFO:</em> property has expected domain Thing <br />
+      
+      
+     
+      <em class="pass">PASS:</em> object is in predicate&#39;s range<br />
+      
+      
+        <em class="info">INFO:</em> property has expected range Text <br />
+      
+        <em class="info">INFO:</em> points to object of type Text <br />
+      
+      
+    
+  </p>
+   
+  <h3>Report on predicate check for http://schema.org/hasPart</h3>
+  <p>Check that subject and object are in expected domain and range<br />
+    
+        <em class="info">INFO:</em> predicate in statement http://example.org/L1 http://schema.org/hasPart http://example.org/L1#video <br />
+    
+     
+      <em class="pass">PASS:</em> subject is in predicate&#39;s domain<br />
+      
+      
+        <em class="info">INFO:</em> used on subject named  Lesson 1, Introduction <br />
+      
+        <em class="info">INFO:</em> subject is of type Lesson, InstructionalPattern, LearningComponent, CreativeWork, Thing, Resource, [no label], Resource <br />
+      
+        <em class="info">INFO:</em> property has expected domain CreativeWork <br />
+      
+      
+     
+      <em class="pass">PASS:</em> object is in predicate&#39;s range<br />
+      
+      
+        <em class="info">INFO:</em> property has expected range CreativeWork <br />
+      
+        <em class="info">INFO:</em> points to object of type SupportingMaterial, AssociatedMaterial, LearningComponent, CreativeWork, Thing, Resource, [no label], Resource <br />
+      
+      
+    
+  </p>
+   
+  <h3>Report on predicate check for http://www.w3.org/1999/02/22-rdf-syntax-ns#type</h3>
+  <p>Check that subject and object are in expected domain and range<br />
+    
+        <em class="info">INFO:</em> predicate in statement http://example.org/L1 http://www.w3.org/1999/02/22-rdf-syntax-ns#type http://oerschema.org/Lesson <br />
+    
+     
+      <em class="pass">PASS:</em> subject is in predicate&#39;s domain<br />
+      
+      
+        <em class="info">INFO:</em> used on subject named  Lesson 1, Introduction <br />
+      
+        <em class="info">INFO:</em> subject is of type Lesson, InstructionalPattern, LearningComponent, CreativeWork, Thing, Resource, [no label], Resource <br />
+      
+        <em class="info">INFO:</em> property has expected domain Resource <br />
+      
+      
+     
+      <em class="pass">PASS:</em> object is in predicate&#39;s range<br />
+      
+      
+        <em class="info">INFO:</em> property has expected range Class <br />
+      
+        <em class="info">INFO:</em> points to object of type Class, Resource, Class, Intangible, Thing, Resource <br />
+      
+      
+    
+  </p>
+   
+  <h3>Report on predicate check for sod:description</h3>
+  <p>Check that subject and object are in expected domain and range<br />
+    
+        <em class="info">INFO:</em> predicate in statement http://example.org/L1#video sod:description It&#39;s really easy to mistype namespace prefixes. <br />
+    
+     
+      <em class="fail">FAIL</em> subject check<br />
+      
+      
+        <em class="info">INFO:</em> predicate not in schema graph <br />
+      
+      
+     
+      <em class="fail">FAIL</em> object range check<br />
+      
+      
+        <em class="info">INFO:</em> predicate not in schema graph <br />
+      
+      
+    
+  </p>
+   
+  <h3>Report on predicate check for http://www.w3.org/1999/02/22-rdf-syntax-ns#type</h3>
+  <p>Check that subject and object are in expected domain and range<br />
+    
+        <em class="info">INFO:</em> predicate in statement http://example.org/L1 http://www.w3.org/1999/02/22-rdf-syntax-ns#type http://schema.org/CreativeWork <br />
+    
+     
+      <em class="pass">PASS:</em> subject is in predicate&#39;s domain<br />
+      
+      
+        <em class="info">INFO:</em> used on subject named  Lesson 1, Introduction <br />
+      
+        <em class="info">INFO:</em> subject is of type Lesson, InstructionalPattern, LearningComponent, CreativeWork, Thing, Resource, [no label], Resource <br />
+      
+        <em class="info">INFO:</em> property has expected domain Resource <br />
+      
+      
+     
+      <em class="pass">PASS:</em> object is in predicate&#39;s range<br />
+      
+      
+        <em class="info">INFO:</em> property has expected range Class <br />
+      
+        <em class="info">INFO:</em> points to object of type Class, Resource, Class, Intangible, Thing, Resource <br />
+      
+      
+    
+  </p>
+   
+  <h3>Report on predicate check for http://www.w3.org/1999/02/22-rdf-syntax-ns#type</h3>
+  <p>Check that subject and object are in expected domain and range<br />
+    
+        <em class="info">INFO:</em> predicate in statement http://example.org/L2 http://www.w3.org/1999/02/22-rdf-syntax-ns#type http://schema.org/Creativework <br />
+    
+     
+      <em class="pass">PASS:</em> subject is in predicate&#39;s domain<br />
+      
+      
+        <em class="info">INFO:</em> used on subject named  Lesson 2, An error <br />
+      
+        <em class="info">INFO:</em> subject is of type [no label], Resource <br />
+      
+        <em class="info">INFO:</em> property has expected domain Resource <br />
+      
+      
+     
+      <em class="pass">PASS:</em> object is in predicate&#39;s range<br />
+      
+      
+        <em class="info">INFO:</em> property has expected range Class <br />
+      
+      
+        <em class="warning">WARNING:</em> not checked: object type not known <br />
+      
+        <em class="warning">WARNING:</em> a URI reference for an object of unknown type has been used (it may not be on this page) where Class was expected. You should check the object at the end of the URI is of the right type. You could add its type to stop seeing this warning  <br />
+      
+    
+  </p>
+   
+  <h3>Report on predicate check for http://schema.org/name</h3>
+  <p>Check that subject and object are in expected domain and range<br />
+    
+        <em class="info">INFO:</em> predicate in statement http://example.org/L2 http://schema.org/name Lesson 2, An error <br />
+    
+     
+      <em class="fail">FAIL</em> subject check<br />
+      
+      
+        <em class="info">INFO:</em> used on subject named  Lesson 2, An error <br />
+      
+        <em class="info">INFO:</em> subject is of type [no label], Resource <br />
+      
+        <em class="info">INFO:</em> property has expected domain Thing <br />
+      
+        <em class="info">INFO:</em> subject is of type that is not in predicate&#39;s domain <br />
+      
+      
+     
+      <em class="pass">PASS:</em> object is in predicate&#39;s range<br />
+      
+      
+        <em class="info">INFO:</em> property has expected range Text <br />
+      
+        <em class="info">INFO:</em> points to object of type Text <br />
+      
+      
+    
+  </p>
+   
+  <h3>Report on predicate check for http://schema.org/hasPart</h3>
+  <p>Check that subject and object are in expected domain and range<br />
+    
+        <em class="info">INFO:</em> predicate in statement http://example.org/L1 http://schema.org/hasPart http://example.org/AM1 <br />
+    
+     
+      <em class="pass">PASS:</em> subject is in predicate&#39;s domain<br />
+      
+      
+        <em class="info">INFO:</em> used on subject named  Lesson 1, Introduction <br />
+      
+        <em class="info">INFO:</em> subject is of type Lesson, InstructionalPattern, LearningComponent, CreativeWork, Thing, Resource, [no label], Resource <br />
+      
+        <em class="info">INFO:</em> property has expected domain CreativeWork <br />
+      
+      
+     
+      <em class="pass">PASS:</em> object is in predicate&#39;s range<br />
+      
+      
+        <em class="info">INFO:</em> property has expected range CreativeWork <br />
+      
+      
+        <em class="warning">WARNING:</em> not checked: object type not known <br />
+      
+        <em class="warning">WARNING:</em> a URI reference for an object of unknown type has been used (it may not be on this page) where CreativeWork was expected. You should check the object at the end of the URI is of the right type. You could add its type to stop seeing this warning  <br />
+      
+    
+  </p>
+   
+  <h3>Report on predicate check for http://www.w3.org/1999/02/22-rdf-syntax-ns#type</h3>
+  <p>Check that subject and object are in expected domain and range<br />
+    
+        <em class="info">INFO:</em> predicate in statement http://example.org/L1#video http://www.w3.org/1999/02/22-rdf-syntax-ns#type http://schema.org/CreativeWork <br />
+    
+     
+      <em class="pass">PASS:</em> subject is in predicate&#39;s domain<br />
+      
+      
+        <em class="info">INFO:</em> used on subject named  Lesson 1, Introduction: Video <br />
+      
+        <em class="info">INFO:</em> subject is of type SupportingMaterial, AssociatedMaterial, LearningComponent, CreativeWork, Thing, Resource, [no label], Resource <br />
+      
+        <em class="info">INFO:</em> property has expected domain Resource <br />
+      
+      
+     
+      <em class="pass">PASS:</em> object is in predicate&#39;s range<br />
+      
+      
+        <em class="info">INFO:</em> property has expected range Class <br />
+      
+        <em class="info">INFO:</em> points to object of type Class, Resource, Class, Intangible, Thing, Resource <br />
+      
+      
+    
+  </p>
+  
+</section><section id="turtle">
+  <h2>Retrieved graph in Turtle</h2>
+  <pre><code>@prefix ns1: &lt;sod:&gt; .
+@prefix ocx: &lt;https://github.com/K12OCX/k12ocx-specs/&gt; .
+@prefix oer: &lt;http://oerschema.org/&gt; .
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+@prefix sdo: &lt;http://schema.org/&gt; .
+@prefix xml: &lt;http://www.w3.org/XML/1998/namespace&gt; .
+@prefix xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt; .
+
+&lt;http://example.org/L1&gt; a oer:Lesson,
+        sdo:CreativeWork ;
+    sdo:description &#34;A demo lesson.&#34; ;
+    sdo:hasPart &lt;http://example.org/AM1&gt;,
+        &lt;http://example.org/L1#video&gt; ;
+    sdo:name &#34;Lesson 1, Introduction&#34; .
+
+&lt;http://example.org/L2&gt; a sdo:Creativework ;
+    sdo:description &#34;It&#39;s really easy to get the case wrong when declaring types&#34; ;
+    sdo:name &#34;Lesson 2, An error&#34; .
+
+&lt;http://example.org/L1#video&gt; a oer:SupportingMaterial,
+        sdo:CreativeWork ;
+    sdo:name &#34;Lesson 1, Introduction: Video&#34; ;
+    ns1:description &#34;It&#39;s really easy to mistype namespace prefixes.&#34; .
+
+<code></pre>
+</section>

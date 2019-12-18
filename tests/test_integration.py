@@ -9,10 +9,12 @@ def test_integration(test_client):
     response = test_client.get("/check?url=" + url)
     # uncomment this block to write new expected results if you
     # change any checks or the file tested
-    #    with open('tests/output/response.html', 'w+b') as o_file:
-    #        o_file.write(response.data)
-    #        o_file.close
-    expected_response = open("tests/output/response.html", "r+b")
+    # with open('tests/output/response.html', 'w') as o_file:
+    #    o_file.write(response.data.decode('UTF8'))
+    #    o_file.close
+    expected_response = open("tests/output/response.html", "r")
     # the order of the test results in the report is not fixed
-    for line in expected_response.readline():
-        assert line in response.data
+    for line in expected_response.readlines():
+        print(line)
+        assert line in response.data.decode("UTF8")
+    assert false

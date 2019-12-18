@@ -12,7 +12,7 @@ def test_integration(test_client):
     #    with open('tests/output/response.html', 'w+b') as o_file:
     #        o_file.write(response.data)
     #        o_file.close
-    #    expected_response = open('tests/output/response.html', 'r+b')
+    expected_response = open("tests/output/response.html", "r+b")
     # the order of the test results in the report is not fixed
     for line in expected_response.readline():
         assert line in response.data

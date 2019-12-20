@@ -1,0 +1,17 @@
+dist: xenial
+sudo: false
+
+language: python
+python:
+  - "3.6"
+  - "3.7"
+
+install:
+  - pip install -r requirements.txt
+  - pip install pytest-cov
+  - pip install codecov
+
+script:
+  - pytest --cov=ocxsect --cov-report=xml -v
+after_success:
+  codecov

@@ -105,7 +105,7 @@ class Checker:
         )
         report.sections(result)
         report.turtle(self.ocx_graph)
-        report.end_report
+        report.end_report()
         return report
 
     def set_output_params(self, query_parameters):

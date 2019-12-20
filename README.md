@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/philbarker/OCXchecker.svg?branch=master)](https://travis-ci.org/philbarker/OCXchecker)
+[![Coverage](https://codecov.io/gh/philbarker/OCXchecker/branch/master/graph/badge.svg)](https://codecov.io/gh/philbarker/OCXchecker/)
+
 Checks JSON-LD found in web pages for conformance with K12-OCX.
 
 Checks include

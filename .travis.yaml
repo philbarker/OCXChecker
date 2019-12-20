@@ -11,6 +11,4 @@ install:
   - pip install -r dev-reqs.txt
 
 script:
-  - pytest --cov=OCXchecker --cov-report=xml -v
-after_success:
-  codecov
+  - pytest

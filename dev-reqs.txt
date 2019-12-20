@@ -1,3 +1,5 @@
 pytest
 black
 pre-commit
+pytest-cov
+codecov
